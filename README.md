@@ -12,7 +12,7 @@
 
 - käyttäjäsivu näyttää, montako arvostelua käyttäjä on lisännyt ja listan käyttäjän lisäämistä arvosteluista.
 
-- käyttäjä pystyy valitsemaan arvostelulle yhden tai useamman luokittelun (esim. wes anderson, kauhu, draama, 2013 ).
+- käyttäjä pystyy valitsemaan arvostelulle yhden tai useamman luokittelun (esim. klassikko, synkkä, dystopia, taiteellinen).
 
 - käyttäjät pystyvät kommentoimaan muiden käyttäjien arvosteluja ja antamaan arvosanan elokuvasta. arvostelusta näytetään kommentit ja elokuvan keskimääräinen arvosana.
 
