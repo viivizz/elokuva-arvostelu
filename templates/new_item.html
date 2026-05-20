@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Uusi ilmoitus</title>
+</head>
+
+<body>
+  <h1>Uusi ilmoitus</h1>
+  <form action="/create_item" method="post">
+    <p>
+      Elokuvan nimi: <br />
+      <input type="text" name="title" />
+    </p>
+    <p>
+      Ohjaaja, julkaisuvuosi ja genre: <br />
+      <textarea name="info" rows="2" cols="30"></textarea>
+    </p>
+    <p>
+      Arvio: <br />
+      <textarea name="review" rows="8" cols="60"></textarea>
+    </p>
+    <input type="submit" value="Luo ilmoitus" />
+  </form>
+</body>
+
+</html>
