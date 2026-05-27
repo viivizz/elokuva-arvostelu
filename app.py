@@ -85,8 +85,14 @@ def update_item():
         abort(403)
 
     title= request.form["title"]
+    if not title or len(title)>50:
+        abort(403)
     review= request.form["review"]
+    if not review or len(review)>1000:
+        abort(403)
     info= request.form["info"]
+    if not info or len(info)>100:
+        abort(403)
 
     items.update_item(item_id, title, review, info)
 
