@@ -36,7 +36,7 @@ Suositus Python 3.10
 
 ### 2. Kloonaa repositorio
 
-Avaa terminaali projektikansioon ja suorita: 
+Avaa terminaali ja siirry projektikansioon: 
 ```
 git clone (githubin SSH- tai HTTPS-linkki )
 cd elokuva-arvostelu
