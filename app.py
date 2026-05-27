@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -53,12 +53,18 @@ def create_item():
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
     item=items.get_item(item_id)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
     return render_template("edit_item.html", item=item)
 
 
 @app.route("/update_item", methods=["POST"])
 def update_item():
     item_id=request.form["item_id"]
+    item=items.get_item(item_id)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
+
     title= request.form["title"]
     review= request.form["review"]
     info= request.form["info"]
@@ -69,8 +75,11 @@ def update_item():
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
+    item=items.get_item(item_id)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
+
     if request.method=="GET":
-        item=items.get_item(item_id)
         return render_template("remove_item.html", item=item)
     
     if request.method=="POST":
@@ -91,22 +100,25 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        return render_template("register.html", error="Salasanat eivät ole samat")
+
     password_hash = generate_password_hash(password1)
 
     try:
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        return render_template("register.html", error="Tunnus on jo varattu")
 
-    return "Tunnus luotu"
+    session["message"]="Tunnus luotu onnistuneesti"
+    return redirect("/login")
     
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    message=session.get("message")
     if request.method=="GET":
-        return render_template("login.html")
+        return render_template("login.html", message=message)
 
     if request.method=="POST":
         username = request.form["username"]
