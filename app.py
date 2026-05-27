@@ -48,8 +48,14 @@ def new_item():
 def create_item():
     require_login()
     title= request.form["title"]
+    if not title or len(title)>50:
+        abort(403)
     review= request.form["review"]
+    if not review or len(review)>1000:
+        abort(403)
     info= request.form["info"]
+    if not info or len(info)>100:
+        abort(403)
     user_id=session["user_id"]
 
     items.add_item(title, review, info, user_id)
@@ -132,7 +138,7 @@ def create():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    message=session.get("message")
+    message=session.pop("message", None)
     if request.method=="GET":
         return render_template("login.html", message=message)
 
@@ -141,7 +147,12 @@ def login():
         password = request.form["password"]
 
         sql = "SELECT id, password_hash FROM users WHERE username = ?"
-        result= db.query(sql, [username])[0]
+        results= db.query(sql, [username])
+
+        if not results:
+            return render_template("login.html", error="VIRHE: väärä tunnus tai salasana")
+
+        result=results[0]
         user_id=result["id"]
         password_hash=result["password_hash"]
 
@@ -150,7 +161,8 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            return render_template("login.html", error="VIRHE: väärä tunnus tai salasana")
+
 
 @app.route("/logout")
 def logout():
