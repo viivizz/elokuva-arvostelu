@@ -1,6 +1,8 @@
-# elokuva-arvostelu
+# Elokuva-arvostelu
 
-- sovelluksessa käyttäjät pystyvät jakamaan elokuva-arvostelujaan muiden käyttäjien nähtäville. arvostelussa lukee elokuvan perustiedot: nimi, ohjaaja, julkaisuvuosi, genre sekä käyttäjän kirjoittama arvio elokuvasta.
+## Sovelluksen kuvaus
+
+Sovelluksessa käyttäjät pystyvät jakamaan elokuva-arvostelujaan muiden käyttäjien nähtäville. Arvostelussa lukee elokuvan perustiedot: nimi, ohjaaja, julkaisuvuosi, genre sekä käyttäjän kirjoittama arvio elokuvasta.
 
 - käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 
@@ -19,19 +21,29 @@
 - sovelluksen pääasiallinen tietokohde on elokuva-arvostelu ja toissijainen tietokohde on arvostelun kommentti.
 
 
-##Sovelluksen käynnistäminen:
+## Sovelluksen toiminnot tällä hetkellä:
+- käyttäjä voi rekisteröityä ja kirjautua sisään sovellukseen
+- tietokohteiden eli elokuva-arvostelujen lisääminen, muokkaaminen ja poistaminen
+- lisättyjen arvostelujen selaaminen
+- arvostelujen etsiminen hakusanalla
 
-###1. Asenna Python
+
+## Sovelluksen käynnistäminen:
+
+### 1. Asenna Python
+
 Suositus Python 3.10
 
-###2. Kloonaa repositorio
+### 2. Kloonaa repositorio
+
 Avaa terminaali projektikansioon ja suorita: 
 ```
 git clone (githubin SSH- tai HTTPS-linkki )
 cd elokuva-arvostelu
 ```
 
-###3. Luo virtuaaliympäristö 
+### 3. Luo virtuaaliympäristö 
+
 Windows: 
 ```
 python -m venv venv
@@ -44,20 +56,21 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-###4. Asenna Python-kirjasto: 
+### 4. Asenna Python-kirjasto: 
 ```
 pip install flask
 ```
 
-###5. Luo tietokanta SQL-tiedoston avulla 
+### 5. Luo tietokanta SQL-tiedoston avulla 
 ```
 sqlite3 database.db < schema.sql
 ```
 
-###6. Käynnistä sovellus 
+### 6. Käynnistä sovellus 
 ```
 flask run
 ```
 
-###7. Avaa sovellus osoitteessa http://127.0.0.1:5000
+### 7. Avaa sovellus osoitteessa http://127.0.0.1:5000
+
 Luo uusi käyttäjä etusivulla ja kirjaudu sisään.
