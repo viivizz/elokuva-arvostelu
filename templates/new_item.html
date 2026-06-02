@@ -20,78 +20,17 @@
       Arvio: <br />
       <textarea name="review" rows="8" cols="60" maxlength="1000" required></textarea>
     </p>
+    {%for class in classes%}
     <p>
-      Tunnelma: <br />
-      <select name="section">
-        <option value="">(valitse)</option>
-        <option value="jännittävä">jännittävä</option>
-        <option value="synkkä">synkkä</option>
-        <option value="pelottava">pelottava</option>
-        <option value="hauska">hauska</option>
-        <option value="kevyt">kevyt</option>
-        <option value="romanttinen">romanttinen</option>
-        <option value="surullinen">surullinen</option>
-        <option value="toiveikas">toiveikas</option>
-        <option value="brutaali">brutaali</option>
-        <option value="koskettava">koskettava</option>
-        <option value="mystinen">mystinen</option>
-        <option value="inspiroiva">inspiroiva</option>
+      {{class}}: <br />
+      <select name="classes">
+        <option value="">(valitse)</option>"
+      {%for option in classes[class]%}
+        <option value="{{class}}:{{option}}">{{option}}</option>
+      {%endfor%}
       </select>
     </p>
-    <p>
-      Teema: <br />
-      <select name="theme">
-        <option value="">(valitse)</option>
-        <option value="dystopia">dystopia</option>
-        <option value="utopia">utopia</option>
-        <option value="selviytyminen">selviytyminen</option>
-        <option value="tulevaisuus">tulevaisuus</option>
-        <option value="historia">historia</option>
-        <option value="sota">sota</option>
-        <option value="avaruus">avaruus</option>
-        <option value="rikollisuus">rikollisuus</option>
-        <option value="tekoäly">tekoäly</option>
-        <option value="avaruus">avaruus</option>
-        <option value="villilänsi">villilänsi</option>
-        <option value="ystävyys">ystävyys</option>
-        <option value="perhe">perhe</option>
-        <option value="politiikka">politiikka</option>
-        <option value="katastrofi">katastrofi</option>
-        <option value="yliluonnollinen">yliluonnollinen</option>
-      </select>
-    </p>
-    <p>
-      Tyyli: <br />
-      <select name="style">
-        <option value="">(valitse)</option>
-        <option value="klassikko">klassikko</option>
-        <option value="kulttielokuva">kulttielokuva</option>
-        <option value="indie">indie</option>
-        <option value="taide-elokuva">taide-elokuva</option>
-        <option value="animaatio">animaatio</option>
-        <option value="Oscar-voittaja">Oscar-voittaja</option>
-        <option value="blockbuster">blockbuster</option>
-        <option value="ikoninen">ikoninen</option>
-        <option value="visuaalinen">visuaalinen</option>
-        <option value="realistinen">realistinen</option>
-        <option value="dokumentti">dokumentti</option>
-        <option value="vähäeleinen">vähäeleinen</option>
-        <option value="minimalistinen">minimalistinen</option>
-
-
-      </select>
-    </p>
-    <p>
-      Kohdeyleisö: <br />
-      <select name="target">
-        <option value="">(valitse)</option>
-        <option value="perhe">perhe</option>
-        <option value="lapset">lapset</option>
-        <option value="nuoret">nuoret</option>
-        <option value="aikuiset">aikuiset</option>
-        <option value="kaikki">kaikki</option>
-      </select>
-    </p>
+    {%endfor%}
     <input type="submit" value="Luo ilmoitus" />
   </form>
 </body>
