@@ -26,6 +26,8 @@ Sovelluksessa käyttäjät pystyvät jakamaan elokuva-arvostelujaan muiden käyt
 - tietokohteiden eli elokuva-arvostelujen lisääminen, muokkaaminen ja poistaminen
 - lisättyjen arvostelujen selaaminen
 - arvostelujen etsiminen hakusanalla
+- käyttäjäsivut näyttävät listan käyttäjän lisäämistä arvosteluista
+- käyttäjä pystyy valitsemaan arvostelulle luokitteluita
 
 
 ## Sovelluksen käynnistäminen:
