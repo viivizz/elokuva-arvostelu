@@ -1,7 +1,6 @@
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, request, session
-from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
 import items
@@ -140,16 +139,14 @@ def create():
     if password1 != password2:
         return render_template("register.html", error="Salasanat eivät ole samat")
 
-    password_hash = generate_password_hash(password1)
-
     try:
-        sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        db.execute(sql, [username, password_hash])
+        users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return render_template("register.html", error="Tunnus on jo varattu")
 
     session["message"]="Tunnus luotu onnistuneesti"
     return redirect("/login")
+
     
 
 @app.route("/login", methods=["GET", "POST"])
@@ -162,22 +159,14 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        sql = "SELECT id, password_hash FROM users WHERE username = ?"
-        results= db.query(sql, [username])
-
-        if not results:
-            return render_template("login.html", error="VIRHE: väärä tunnus tai salasana")
-
-        result=results[0]
-        user_id=result["id"]
-        password_hash=result["password_hash"]
-
-        if check_password_hash(password_hash, password):
+        user_id=users.check_login(username, password)
+        if user_id:
             session["user_id"]=user_id
             session["username"] = username
             return redirect("/")
-        else:
-            return render_template("login.html", error="VIRHE: väärä tunnus tai salasana")
+
+
+        return render_template("login.html", error="VIRHE: väärä tunnus tai salasana")
 
 
 @app.route("/logout")
