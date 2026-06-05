@@ -4,23 +4,33 @@ CREATE TABLE users (
     password_hash TEXT
 );
 
-CREATE TABLE items (
+CREATE TABLE reviews (
     id INTEGER PRIMARY KEY,
     title TEXT,
-    info TEXT,
-    review TEXT,
+    director TEXT,
+    release_year INTEGER,
+    genre TEXT,
+    content TEXT,
     user_id INTEGER REFERENCES users
 );
 
-CREATE TABLE classes (
+CREATE TABLE themes (
     id INTEGER PRIMARY KEY,
-    title TEXT,
-    value TEXT
+    value TEXT UNIQUE
 );
 
-CREATE TABLE item_classes (
+CREATE TABLE styles (
     id INTEGER PRIMARY KEY,
-    item_id INTEGER REFERENCES items,
-    title TEXT,
-    value TEXT
+    value TEXT UNIQUE
+);
+
+CREATE TABLE audiences (
+    id INTEGER PRIMARY KEY,
+    value TEXT UNIQUE
+);
+
+CREATE TABLE review_classes (
+    id INTEGER PRIMARY KEY,
+    review_id INTEGER REFERENCES reviews,
+    theme TEXT, style TEXT, audience TEXT
 );

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Arvostelun muokkaus</title>
+</head>
+
+<body>
+  
+  {% for message in get_flashed_messages()%}
+  <p>
+    <b>{{message}}</b>
+  </p>
+  {%endfor%}
+
+  <h1>Arvostelun muokkaus</h1>
+  <form action="/update_review" method="post">
+    <p>
+      Elokuvan nimi: <br />
+      <input type="text" name="title" value="{{review.title}}" maxlength="50" required/>
+    </p>
+    <p>
+      Ohjaaja: <br />
+      <input type="text" name="director" value="{{review.director}}" maxlength="50" required/>
+    </p>
+
+    <p>
+      Julkaisuvuosi: <br />
+      <input type="number" name="release_year" value="{{review.release_year}}" required/>
+    </p>
+
+    <p>
+      Genre: <br />
+      <input type="text" name="genre" value="{{review.genre}}" maxlength="50" required/>
+    </p>
+
+    <p>
+      Arvio: <br />
+      <textarea name="content" rows="8" cols="60" maxlength="1000" required>{{review.content}}</textarea>
+    </p>
+    <input type="hidden" name="review_id" value="{{review.id}}"/>
+    <input type="submit" value="Päivitä arvostelua" />
+  </form>
+</body>
+
+</html>

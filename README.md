@@ -34,7 +34,7 @@ Sovelluksessa käyttäjät pystyvät jakamaan elokuva-arvostelujaan muiden käyt
 
 ### 1. Asenna Python
 
-Suositus Python 3.10
+Sovellus toimi Python 3 -versiolla
 
 ### 2. Kloonaa repositorio
 
@@ -68,11 +68,16 @@ pip install flask
 sqlite3 database.db < schema.sql
 ```
 
-### 6. Käynnistä sovellus 
+### 6. Lisää luokittelut
+```
+sqlite3 database.db < init.sql
+```
+
+### 7. Käynnistä sovellus 
 ```
 flask run
 ```
 
-### 7. Avaa sovellus osoitteessa http://127.0.0.1:5000
+### 8. Avaa sovellus osoitteessa http://127.0.0.1:5000
 
 Luo uusi käyttäjä etusivulla ja kirjaudu sisään.

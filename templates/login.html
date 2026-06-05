@@ -6,13 +6,11 @@
 </head>
 
 <body>
-  {% if error %}
-  <p>{{error}}</p>
-  {% endif %}
-
-  {% if message %}
-  <p>{{message}}</p>
-  {% endif %}
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{message}}</b>
+  </p>
+  {% endfor %}
 
   {% if session.username %}
   <p>
@@ -21,19 +19,21 @@
   <p>
     <a href="/logout">Kirjaudu ulos</a>
   </p>
+
   {% else %}
-  <form action="/login" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
-  {% endif %}
+    <form action="/login" method="post">
+      <p>
+        Tunnus: <br />
+        <input type="text" name="username" />
+      </p>
+
+      <p>
+        Salasana: <br />
+        <input type="password" name="password" />
+      </p>
+      <input type="submit" value="Kirjaudu" />
+    </form>
+  {%endif%}
 </body>
 
 </html>

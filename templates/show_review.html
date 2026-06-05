@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{review.title}}</title>
+</head>
+
+<body>
+  
+  {% for message in get_flashed_messages()%}
+  <p>
+    <b>{{message}}</b>
+  </p>
+  {%endfor%}
+
+  <h1>{{review.title}}</h1>
+  {% if session.user_id == review.user_id %}
+  <p>
+    <a href="/edit_review/{{review.id}}">Muokkaa</a>
+    <a href="/remove_review/{{review.id}}">Poista</a>
+  </p>
+  {% endif %}
+  <p>
+    {{review.content}}
+  </p>
+  <p>
+    Ohjaaja: {{review.director}}
+  </p>
+  <p>
+    Julkaisuvuosi: {{review.release_year}}
+  </p>
+  <p>
+    Genre: {{review.genre}}
+  </p>
+  <p>
+    Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
+  </p>
+  {% if classes %}
+  <p>
+    <ul>
+      <li>Teema: {{classes.theme}}</li>
+      <li>Tyyli: {{classes.style}}</li>
+      <li>Kohdeyleisö: {{classes.audience}}</li>
+    </ul>
+  </p>
+  {%endif%}
+  <p>
+    <a href="/">Takaisin</a>
+  </p>
+</body>
+
+</html>

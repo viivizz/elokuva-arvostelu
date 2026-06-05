@@ -1,39 +1,41 @@
-DELETE FROM classes;
+DELETE FROM themes;
+DELETE FROM styles;
+DELETE FROM audiences;
 
-INSERT INTO classes (title, value) VALUES ('Teema', 'dystopia');
-INSERT INTO classes (title, value) VALUES ('Teema', 'utopia');
-INSERT INTO classes (title, value) VALUES ('Teema', 'selviytyminen');
-INSERT INTO classes (title, value) VALUES ('Teema', 'tulevaisuus');
-INSERT INTO classes (title, value) VALUES ('Teema', 'historia');
-INSERT INTO classes (title, value) VALUES ('Teema', 'sota');
-INSERT INTO classes (title, value) VALUES ('Teema', 'avaruus');
-INSERT INTO classes (title, value) VALUES ('Teema', 'rikollisuus');
-INSERT INTO classes (title, value) VALUES ('Teema', 'tekoäly');
-INSERT INTO classes (title, value) VALUES ('Teema', 'villilänsi');
-INSERT INTO classes (title, value) VALUES ('Teema', 'ystävyys');
-INSERT INTO classes (title, value) VALUES ('Teema', 'perhe');
-INSERT INTO classes (title, value) VALUES ('Teema', 'politiikka');
-INSERT INTO classes (title, value) VALUES ('Teema', 'katastrofi');
-INSERT INTO classes (title, value) VALUES ('Teema', 'yliluonnollinen');
-
-
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'klassikko');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'kulttielokuva');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'indie');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'taide-elokuva');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'animaatio');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'Oscar-voittaja');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'blockbuster');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'ikoninen');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'visuaalinen');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'realistinen');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'dokumentti');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'vähäeleinen');
-INSERT INTO classes (title, value) VALUES ('Tyyli', 'minimalistinen');
+INSERT INTO themes (value) VALUES ('dystopia');
+INSERT INTO themes (value) VALUES ('utopia');
+INSERT INTO themes (value) VALUES ('selviytyminen');
+INSERT INTO themes (value) VALUES ('tulevaisuus');
+INSERT INTO themes (value) VALUES ('historia');
+INSERT INTO themes (value) VALUES ('sota');
+INSERT INTO themes (value) VALUES ('avaruus');
+INSERT INTO themes (value) VALUES ('rikollisuus');
+INSERT INTO themes (value) VALUES ('tekoäly');
+INSERT INTO themes (value) VALUES ('villilänsi');
+INSERT INTO themes (value) VALUES ('ystävyys');
+INSERT INTO themes (value) VALUES ('perhe');
+INSERT INTO themes (value) VALUES ('politiikka');
+INSERT INTO themes (value) VALUES ('katastrofi');
+INSERT INTO themes (value) VALUES ('yliluonnollinen');
 
 
-INSERT INTO classes (title, value) VALUES ('Kohdeyleisö', 'perhe');
-INSERT INTO classes (title, value) VALUES ('Kohdeyleisö', 'lapset');
-INSERT INTO classes (title, value) VALUES ('Kohdeyleisö', 'nuoret');
-INSERT INTO classes (title, value) VALUES ('Kohdeyleisö', 'aikuiset');
-INSERT INTO classes (title, value) VALUES ('Kohdeyleisö', 'kaikki');
+INSERT INTO styles (value) VALUES ('klassikko');
+INSERT INTO styles (value) VALUES ('kulttielokuva');
+INSERT INTO styles (value) VALUES ('indie');
+INSERT INTO styles (value) VALUES ('taide-elokuva');
+INSERT INTO styles (value) VALUES ('animaatio');
+INSERT INTO styles (value) VALUES ('Oscar-voittaja');
+INSERT INTO styles (value) VALUES ('blockbuster');
+INSERT INTO styles (value) VALUES ('ikoninen');
+INSERT INTO styles (value) VALUES ('visuaalinen');
+INSERT INTO styles (value) VALUES ('realistinen');
+INSERT INTO styles (value) VALUES ('dokumentti');
+INSERT INTO styles (value) VALUES ('vähäeleinen');
+INSERT INTO styles (value) VALUES ('minimalistinen');
+
+
+INSERT INTO audiences (value) VALUES ('perhe');
+INSERT INTO audiences (value) VALUES ('lapset');
+INSERT INTO audiences (value) VALUES ('nuoret');
+INSERT INTO audiences (value) VALUES ('aikuiset');
+INSERT INTO audiences (value) VALUES ('kaikki');

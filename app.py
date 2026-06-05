@@ -1,9 +1,9 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session, flash
 import db
 import config
-import items
+import reviews
 import users
 
 
@@ -13,155 +13,206 @@ app.secret_key = config.secret_key
 
 def require_login():
     if "user_id" not in session:
-        abort(403)
+        flash("Kirjaudu sisään käyttääksesi tätä toimintoa")
+        return False
+    return True
+
 
 @app.route("/")
 def index():
-    all_items=items.get_items()
-    return render_template("index.html", items=all_items)
+    all_reviews=reviews.get_reviews()
+    return render_template("index.html", reviews=all_reviews)
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
     user=users.get_user(user_id)
     if not user:
         abort(404)
-    items=users.get_items(user_id)
-    return render_template("show_user.html", user=user, items=items)
+    reviews=users.get_reviews(user_id)
+    return render_template("show_user.html", user=user, reviews=reviews)
 
 
-@app.route("/find_item")
-def find_item():
+@app.route("/find_review")
+def find_review():
     query=request.args.get("query")
     if query:
-        results=items.find_items(query)
+        results=reviews.find_reviews(query)
     else:
         query=""
         results=[]
-    return render_template("find_item.html", query=query, results=results)
+    return render_template("find_review.html", query=query, results=results)
 
 
-@app.route("/item/<int:item_id>")
-def show_item(item_id):
-    item=items.get_item(item_id)
-    if not item:
+@app.route("/review/<int:review_id>")
+def show_review(review_id):
+    review=reviews.get_review(review_id)
+    if not review:
         abort(404)
-    classes=items.get_classes(item_id)
-    return render_template("show_item.html", item=item, classes=classes)
+    classes=reviews.get_classes(review_id)
+    return render_template("show_review.html", review=review, classes=classes)
 
 
-@app.route("/new_item")
-def new_item():
-    require_login()
-    classes=items.get_all_classes()
-    return render_template("new_item.html", classes=classes)
+@app.route("/new_review")
+def new_review():
+    if not require_login():
+        return redirect("/login")
+    
+    themes=reviews.get_themes()
+    styles=reviews.get_styles()
+    audiences=reviews.get_audiences()
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
-    require_login()
+    return render_template("new_review.html", themes=themes, styles=styles, audiences=audiences)
+
+@app.route("/create_review", methods=["POST"])
+def create_review():
+    if not require_login():
+        return redirect("/login")
+    
     title= request.form["title"]
     if not title or len(title)>50:
-        abort(403)
-    review= request.form["review"]
-    if not review or len(review)>1000:
-        abort(403)
-    info= request.form["info"]
-    if not info or len(info)>100:
-        abort(403)
+        flash("Virhe: elokuvan nimi on virheellinen")
+        return redirect("/new_review")
+    
+    content= request.form["content"]
+    if not content or len(content)>1000:
+        flash("Virhe: arvosteluteksti on virheellinen")
+        return redirect("/new_review")
+    
+    director=request.form["director"]
+    if not director or len(director)>50:
+        flash("Virhe: ohjaaja on virheellinen")
+        return redirect("/new_review")
+    
+    release_year=request.form["release_year"]
+    if not release_year:
+        flash("Virhe: julkaisuvuosi puuttuu")
+        return redirect("/new_review")
+    
+    genre=request.form["genre"]
+    if not genre or len(genre)>50:
+        flash("Virhe: genre on virheellinen")
+        return redirect("/new_review")
+    
     user_id=session["user_id"]
 
-    classes=[]
-    for entry in request.form.getlist("classes"):
-        if entry:
-            parts=entry.split(":")
-            classes.append((parts[0], parts[1]))
+    theme=request.form["theme"]
+    style=request.form["style"]
+    audience=request.form["audience"]
 
-    items.add_item(title, review, info, user_id, classes)
-
+    reviews.add_review(title, content, director, release_year, genre, user_id, theme, style, audience)
+    flash("Arvostelu luotiin onnistuneesti")
     return redirect("/")
 
 
-@app.route("/edit_item/<int:item_id>")
-def edit_item(item_id):
-    require_login()
-    item=items.get_item(item_id)
-    if not item:
+@app.route("/edit_review/<int:review_id>")
+def edit_review(review_id):
+    if not require_login():
+        return redirect("/login")
+    
+    review=reviews.get_review(review_id)
+    if not review:
         abort(404)
-    if item["user_id"] != session["user_id"]:
+    if review["user_id"] != session["user_id"]:
         abort(403)
-    return render_template("edit_item.html", item=item)
+    return render_template("edit_review.html", review=review)
 
 
-@app.route("/update_item", methods=["POST"])
-def update_item():
-    require_login()
-    item_id=request.form["item_id"]
-    item=items.get_item(item_id)
-    if not item:
+@app.route("/update_review", methods=["POST"])
+def update_review():
+    if not require_login():
+        return redirect("/login")
+    
+    review_id=request.form["review_id"]
+    review=reviews.get_review(review_id)
+    if not review:
         abort(404)
-    if item["user_id"] != session["user_id"]:
+    if review["user_id"] != session["user_id"]:
         abort(403)
 
     title= request.form["title"]
     if not title or len(title)>50:
-        abort(403)
-    review= request.form["review"]
-    if not review or len(review)>1000:
-        abort(403)
-    info= request.form["info"]
-    if not info or len(info)>100:
-        abort(403)
+        flash("Virhe: elokuvan nimi on virheellinen")
+        return redirect("/edit_review/"+str(review_id))
+    
+    content= request.form["content"]
+    if not content or len(content)>1000:
+        flash("Virhe: arvosteluteksti on virheellinen")
+        return redirect("/edit_review/"+str(review_id))
+    
+    director=request.form["director"]
+    if not director or len(director)>50:
+        flash("Virhe: ohjaaja on virheellinen")
+        return redirect("/edit_review/"+str(review_id))
+    
+    release_year=request.form["release_year"]
+    if not release_year:
+        flash("Virhe: julkaisuvuosi puuttuu")
+        return redirect("/edit_review/"+str(review_id))
+    
+    genre=request.form["genre"]
+    if not genre or len(genre)>50:
+        flash("Virhe: genre on virheellinen")
+        return redirect("/edit_review/"+str(review_id))
 
-    items.update_item(item_id, title, review, info)
+    reviews.update_review(review_id, title, content, director, release_year, genre)
 
-    return redirect("/item/"+str(item_id))
+    flash("Arvostelu päivitetty onnistuneesti")
+    return redirect("/review/"+str(review_id))
 
-@app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
-def remove_item(item_id):
-    require_login()
-    item=items.get_item(item_id)
-    if not item:
+
+@app.route("/remove_review/<int:review_id>", methods=["GET", "POST"])
+def remove_review(review_id):
+    if not require_login():
+        return redirect("/login")
+    
+    review=reviews.get_review(review_id)
+    if not review:
         abort(404)
-    if item["user_id"] != session["user_id"]:
+    if review["user_id"] != session["user_id"]:
         abort(403)
 
     if request.method=="GET":
-        return render_template("remove_item.html", item=item)
+        return render_template("remove_review.html", review=review)
     
     if request.method=="POST":
         if "remove" in request.form:
-            items.remove_item(item_id)
+            reviews.remove_review(review_id)
             return redirect("/")
         else:
-            return redirect("/item/"+str(item_id))
+            return redirect("/review/"+str(review_id))
 
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
-
-@app.route("/create", methods=["POST"])
-def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if password1 != password2:
-        return render_template("register.html", error="Salasanat eivät ole samat")
-
-    try:
-        users.create_user(username, password1)
-    except sqlite3.IntegrityError:
-        return render_template("register.html", error="Tunnus on jo varattu")
-
-    session["message"]="Tunnus luotu onnistuneesti"
-    return redirect("/login")
-
+    if request.method=="GET":
+        return render_template("register.html", filled={})
     
+    if request.method=="POST":
+        username = request.form["username"]
+        password1 = request.form["password1"]
+        password2 = request.form["password2"]
+
+        filled={"username": username}
+
+        if password1 != password2:
+            flash("VIRHE: Antamasi salasanat eivät ole samat")
+            return render_template("register.html", filled=filled)
+
+        try:
+            users.create_user(username, password1)
+        except sqlite3.IntegrityError:
+            flash("Tunnus on jo varattu")
+            return render_template("register.html", filled=filled)
+
+        flash("Tunnus luotu onnistuneesti")
+        return redirect("/login")
+
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    message=session.pop("message", None)
     if request.method=="GET":
-        return render_template("login.html", message=message)
+        return render_template("login.html")
 
     if request.method=="POST":
         username = request.form["username"]
@@ -172,9 +223,9 @@ def login():
             session["user_id"]=user_id
             session["username"] = username
             return redirect("/")
-
-
-        return render_template("login.html", error="VIRHE: väärä tunnus tai salasana")
+        
+        flash("VIRHE: väärä tunnus tai salasana")
+        return render_template("login.html")
 
 
 @app.route("/logout")
