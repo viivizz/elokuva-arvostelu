@@ -95,9 +95,19 @@ def create_review():
     
     user_id=session["user_id"]
 
+
     theme=request.form["theme"]
     style=request.form["style"]
     audience=request.form["audience"]
+
+    if theme!="" and theme not in reviews.get_theme_values():
+        abort(403)
+
+    if style!="" and style not in reviews.get_style_values():
+        abort(403)
+
+    if audience!="" and audience not in reviews.get_audience_values():
+        abort(403)
 
     reviews.add_review(title, content, director, release_year, genre, user_id, theme, style, audience)
     flash("Arvostelu luotiin onnistuneesti")
@@ -164,6 +174,15 @@ def update_review():
     theme=request.form["theme"]
     style=request.form["style"]
     audience=request.form["audience"]
+
+    if theme!="" and theme not in reviews.get_theme_values():
+        abort(403)
+
+    if style!="" and style not in reviews.get_style_values():
+        abort(403)
+
+    if audience!="" and audience not in reviews.get_audience_values():
+        abort(403)
 
     reviews.update_review(review_id, title, content, director, release_year, genre, theme, style, audience)
 

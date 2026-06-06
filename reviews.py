@@ -12,6 +12,24 @@ def get_audiences():
     sql="SELECT value FROM audiences ORDER BY id"
     return db.query(sql)
 
+def get_theme_values():
+    values=[]
+    for row in get_themes():
+        values.append(row["value"])
+    return values
+
+def get_style_values():
+    values=[]
+    for row in get_styles():
+        values.append(row["value"])
+    return values
+
+def get_audience_values():
+    values=[]
+    for row in get_audiences():
+        values.append(row["value"])
+    return values
+
 
 
 def add_review(title, content, director, release_year, genre, user_id, theme, style, audience):
@@ -20,6 +38,7 @@ def add_review(title, content, director, release_year, genre, user_id, theme, st
     db.execute(sql, [title, content, director, release_year, genre, user_id])
 
     review_id=db.last_insert_id()
+
 
     sql="INSERT INTO review_classes (review_id, theme, style, audience) VALUES (?,?,?,?)"
     db.execute(sql,[review_id, theme, style, audience])
