@@ -114,7 +114,14 @@ def edit_review(review_id):
         abort(404)
     if review["user_id"] != session["user_id"]:
         abort(403)
-    return render_template("edit_review.html", review=review)
+
+    themes=reviews.get_themes()
+    styles=reviews.get_styles()
+    audiences=reviews.get_audiences()
+
+    classes=reviews.get_classes(review_id)
+
+    return render_template("edit_review.html", review=review, themes=themes, styles=styles, audiences=audiences, classes=classes)
 
 
 @app.route("/update_review", methods=["POST"])
@@ -154,7 +161,11 @@ def update_review():
         flash("Virhe: genre on virheellinen")
         return redirect("/edit_review/"+str(review_id))
 
-    reviews.update_review(review_id, title, content, director, release_year, genre)
+    theme=request.form["theme"]
+    style=request.form["style"]
+    audience=request.form["audience"]
+
+    reviews.update_review(review_id, title, content, director, release_year, genre, theme, style, audience)
 
     flash("Arvostelu päivitetty onnistuneesti")
     return redirect("/review/"+str(review_id))

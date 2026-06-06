@@ -39,6 +39,49 @@
       <textarea name="content" rows="8" cols="60" maxlength="1000" required>{{review.content}}</textarea>
     </p>
     <input type="hidden" name="review_id" value="{{review.id}}"/>
+
+    <p>
+      Teema: <br />
+      <select name="theme">
+        <option value="">(valitse)</option>
+        {%for theme in themes%}
+          {%if theme.value==classes.theme%}
+            <option value="{{theme.value}}" selected>{{theme.value}}</option>
+          {%else%}
+            <option value="{{theme.value}}">{{theme.value}}</option>
+          {%endif%}
+        {%endfor%}
+      </select>
+    </p>
+
+    <p>
+      Tyyli: <br />
+      <select name="style">
+        <option value="">(valitse)</option>
+        {%for style in styles%}
+          {%if style.value==classes.style%}
+            <option value="{{style.value}}" selected>{{style.value}}</option>
+          {%else%}
+            <option value="{{style.value}}">{{style.value}}</option>
+          {%endif%}
+        {%endfor%}
+      </select>
+    </p>
+
+    <p>
+      Kohdeyleisö: <br />
+      <select name="audience">
+        <option value="">(valitse)</option>
+        {%for audience in audiences%}
+          {%if audience.value==classes.audience%}
+            <option value="{{audience.value}}" selected>{{audience.value}}</option>
+          {%else%}
+            <option value="{{audience.value}}">{{audience.value}}</option>
+          {%endif%}
+        {%endfor%}
+      </select>
+    </p>
+
     <input type="submit" value="Päivitä arvostelua" />
   </form>
 </body>

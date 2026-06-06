@@ -27,7 +27,7 @@ def add_review(title, content, director, release_year, genre, user_id, theme, st
 def get_classes(review_id):
     sql="SELECT theme, style, audience FROM review_classes WHERE review_id =?"
     result=db.query(sql, [review_id])
-    return result[0] if result else None
+    return result[0] if result else {"theme": "", "style": "", "audience": ""}
 
 def get_reviews():
     sql = "SELECT id, title FROM reviews ORDER BY id DESC"
@@ -49,7 +49,7 @@ def get_review(review_id):
     return result[0] if result else None
 
 
-def update_review(review_id, title, content, director, release_year, genre):
+def update_review(review_id, title, content, director, release_year, genre, theme, style, audience):
     sql = """UPDATE reviews SET title = ?,
                             content = ?,
                             director = ?,
@@ -57,6 +57,12 @@ def update_review(review_id, title, content, director, release_year, genre):
                             genre = ?
                         WHERE id = ?"""
     db.execute(sql, [title, content, director, release_year, genre, review_id])
+
+    sql="DELETE FROM review_classes WHERE review_id = ?"
+    db.execute(sql, [review_id])
+
+    sql="INSERT INTO review_classes (review_id, theme, style, audience) VALUES (?,?,?,?)"
+    db.execute(sql,[review_id, theme, style, audience])
 
 
 def remove_review(review_id):
