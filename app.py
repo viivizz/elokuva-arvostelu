@@ -47,9 +47,10 @@ def find_review():
 def show_review(review_id):
     review=reviews.get_review(review_id)
     if not review:
-        abort(404)
+        abort(403)
     classes=reviews.get_classes(review_id)
-    return render_template("show_review.html", review=review, classes=classes)
+    comments=reviews.get_comments(review_id)
+    return render_template("show_review.html", review=review, classes=classes, comments=comments)
 
 
 @app.route("/new_review")
@@ -62,6 +63,44 @@ def new_review():
     audiences=reviews.get_audiences()
 
     return render_template("new_review.html", themes=themes, styles=styles, audiences=audiences)
+
+
+
+@app.route("/create_comment", methods=["POST"])
+def create_comment():
+    if not require_login():
+        return redirect("/login")
+
+    review_id=int(request.form["review_id"])
+    review=reviews.get_review(review_id)
+    if not review:
+        abort(403)
+
+    content=request.form["content"]
+    if not content or len(content)>1000:
+        flash("Virhe: kommentti on virheellinen")
+        return redirect("/review/"+str(review_id))
+
+    rating=request.form["rating"]
+    if not rating:
+        flash("Virhe: arvosana puuttuu")
+        return redirect("/review/"+str(review_id))
+
+    if not rating.isdigit():
+        flash("Virhe: arvosanan pitää olla numero")
+        return redirect("/review/"+str(review_id))
+    rating=int(rating)
+    if rating < 1 or rating > 5:
+        flash("Virhe: arvosanan pitää olla välillä 1-5")
+        return redirect("/review/"+str(review_id))
+
+
+    user_id=session["user_id"]
+
+    reviews.add_comment(review_id, user_id, content, rating)
+    flash("Kommentti luotiin onnistuneesti")
+    return redirect("/review/"+str(review_id))
+
 
 @app.route("/create_review", methods=["POST"])
 def create_review():
@@ -121,7 +160,7 @@ def edit_review(review_id):
     
     review=reviews.get_review(review_id)
     if not review:
-        abort(404)
+        abort(403)
     if review["user_id"] != session["user_id"]:
         abort(403)
 
@@ -164,6 +203,9 @@ def update_review():
     release_year=request.form["release_year"]
     if not release_year:
         flash("Virhe: julkaisuvuosi puuttuu")
+        return redirect("/edit_review/"+str(review_id))
+    if not release_year.isdigit():
+        flash("Virhe: julkaisuvuoden pitää olla numero")
         return redirect("/edit_review/"+str(review_id))
     
     genre=request.form["genre"]

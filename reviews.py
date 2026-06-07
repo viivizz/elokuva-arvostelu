@@ -43,6 +43,20 @@ def add_review(title, content, director, release_year, genre, user_id, theme, st
     sql="INSERT INTO review_classes (review_id, theme, style, audience) VALUES (?,?,?,?)"
     db.execute(sql,[review_id, theme, style, audience])
 
+
+def add_comment(review_id, user_id, content, rating):
+    sql = """INSERT INTO comments (review_id, user_id, content, rating)
+            VALUES (?, ?, ?, ?)"""
+    db.execute(sql, [review_id, user_id, content, rating])
+
+def get_comments(review_id):
+    sql="""SELECT comments.content, comments.rating, users.id user_id, users.username
+            FROM comments, users
+            WHERE comments.review_id=? AND comments.user_id=users.id
+            ORDER BY comments.id DESC"""
+    return db.query(sql, [review_id])
+
+
 def get_classes(review_id):
     sql="SELECT theme, style, audience FROM review_classes WHERE review_id =?"
     result=db.query(sql, [review_id])
@@ -85,6 +99,9 @@ def update_review(review_id, title, content, director, release_year, genre, them
 
 
 def remove_review(review_id):
+    sql = "DELETE FROM comments WHERE review_id = ?"
+    db.execute(sql, [review_id])
+
     sql = "DELETE FROM review_classes WHERE review_id = ?"
     db.execute(sql, [review_id])
 

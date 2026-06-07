@@ -14,6 +14,14 @@ CREATE TABLE reviews (
     user_id INTEGER REFERENCES users
 );
 
+CREATE TABLE comments (
+    id INTEGER PRIMARY KEY,
+    review_id REFERENCES reviews,
+    user_id INTEGER REFERENCES users,
+    content TEXT,
+    rating INTEGER
+);
+
 CREATE TABLE themes (
     id INTEGER PRIMARY KEY,
     value TEXT UNIQUE

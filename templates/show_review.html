@@ -35,7 +35,7 @@
   <p>
     Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
   </p>
-  {% if classes %}
+  {% if classes.theme or classes.style or classes.audience %}
   <p>
     <ul>
       <li>Teema: {{classes.theme}}</li>
@@ -44,6 +44,26 @@
     </ul>
   </p>
   {%endif%}
+  <h2>Kommentit</h2>
+  <ul>
+    {%for comment in comments%}
+    <li>{{comment.content}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
+    {%endfor%}
+  </ul>
+  <h2>Uusi kommentti</h2>
+  <form action="/create_comment" method="post">
+    <p>
+      Kommentti: <br />
+      <textarea name="content" rows="5" cols="60" maxlength="1000" required></textarea>
+    </p>
+
+    <p>
+      Arvio: <br />
+      <input type="number" name="rating" min="1" max="5" required/>
+    </p>
+    <input type="hidden" name="review_id" value="{{review.id}}">
+    <input type="submit" value="Julkaise"/>
+  </form>
   <p>
     <a href="/">Takaisin</a>
   </p>
