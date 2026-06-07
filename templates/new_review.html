@@ -1,77 +1,72 @@
-<!DOCTYPE html>
-<html>
+{%extends "layout.html"%}
 
-<head>
-  <title>Uusi arvostelu</title>
-</head>
+{%block title%}Uusi arvostelu{%endblock%}
 
-<body>
+{%block content%}
 
-  {% for message in get_flashed_messages()%}
+{% for message in get_flashed_messages()%}
+<p>
+  <b>{{message}}</b>
+</p>
+{%endfor%}
+
+<h2>Uusi arvostelu</h2>
+<form action="/create_review" method="post">
   <p>
-    <b>{{message}}</b>
+    Elokuvan nimi: <br />
+    <input type="text" name="title" maxlength="50" required/>
   </p>
-  {%endfor%}
-  
-  <h1>Uusi arvostelu</h1>
-  <form action="/create_review" method="post">
-    <p>
-      Elokuvan nimi: <br />
-      <input type="text" name="title" maxlength="50" required/>
-    </p>
 
-    <p>
-      Ohjaaja: <br />
-      <input type="text" name="director" maxlength="50" required/>
-    </p>
+  <p>
+    Ohjaaja: <br />
+    <input type="text" name="director" maxlength="50" required/>
+  </p>
 
-    <p>
-      Julkaisuvuosi: <br />
-      <input type="number" name="release_year" required/>
-    </p>
+  <p>
+    Julkaisuvuosi: <br />
+    <input type="number" name="release_year" required/>
+  </p>
 
-    <p>
-      Genre: <br />
-      <input type="text" name="genre" maxlength="50" required/>
-    </p>
+  <p>
+    Genre: <br />
+    <input type="text" name="genre" maxlength="50" required/>
+  </p>
 
-    <p>
-      Arvio: <br />
-      <textarea name="content" rows="8" cols="60" maxlength="1000" required></textarea>
-    </p>
+  <p>
+    Arvio: <br />
+    <textarea name="content" rows="8" cols="60" maxlength="1000" required></textarea>
+  </p>
 
-    <p>
-      Teema: <br />
-      <select name="theme">
-        <option value="">(valitse)</option>
-        {%for theme in themes%}
-          <option value="{{theme.value}}">{{theme.value}}</option>
-        {%endfor%}
-      </select>
-    </p>
+  <p>
+    Teema: <br />
+    <select name="theme">
+      <option value="">(valitse)</option>
+      {%for theme in themes%}
+        <option value="{{theme.value}}">{{theme.value}}</option>
+      {%endfor%}
+    </select>
+  </p>
 
-    <p>
-      Tyyli: <br />
-      <select name="style">
-        <option value="">(valitse)</option>
-        {%for style in styles%}
-          <option value="{{style.value}}">{{style.value}}</option>
-        {%endfor%}
-      </select>
-    </p>
+  <p>
+    Tyyli: <br />
+    <select name="style">
+      <option value="">(valitse)</option>
+      {%for style in styles%}
+        <option value="{{style.value}}">{{style.value}}</option>
+      {%endfor%}
+    </select>
+  </p>
 
-    <p>
-      Kohdeyleisö: <br />
-      <select name="audience">
-        <option value="">(valitse)</option>
-        {%for audience in audiences%}
-          <option value="{{audience.value}}">{{audience.value}}</option>
-        {%endfor%}
-      </select>
-    </p>
+  <p>
+    Kohdeyleisö: <br />
+    <select name="audience">
+      <option value="">(valitse)</option>
+      {%for audience in audiences%}
+        <option value="{{audience.value}}">{{audience.value}}</option>
+      {%endfor%}
+    </select>
+  </p>
 
-    <input type="submit" value="Luo arvostelu" />
-  </form>
-</body>
-
-</html>
+  <input type="submit" value="Luo arvostelu" />
+</form>
+{%endblock%}

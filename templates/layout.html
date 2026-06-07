@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{%block title%}{%endblock%}</title>
+</head>
+
+<body>
+  
+  {% for message in get_flashed_messages()%}
+  <p>
+    <b>{{message}}</b>
+  </p>
+  {%endfor%}
+
+  <h1>Elokuva-arvostelu</h1>
+
+  {%if session.username%}
+  <p>
+    Olet kirjautunut nimellä {{ session.username }}
+  </p>
+  {%endif%}
+
+  <p>
+    <a href="/">Etusivu</a>
+    <a href="/find_review">Etsi arvostelu</a>
+  {%if session.user_id%}
+    <a href="/new_review">Luo uusi arvostelu</a>
+    <a href="/logout">Kirjaudu ulos</a>
+  {%else%}
+    <a href="/login">Kirjaudu sisään</a>
+    <a href="/register">Luo tunnus</a>
+  {%endif%}
+  </p>
+
+  {%block content%}{%endblock%}
+</body>
+
+</html>

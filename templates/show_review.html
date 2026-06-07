@@ -1,72 +1,65 @@
-<!DOCTYPE html>
-<html>
+{%extends "layout.html"%}
 
-<head>
-  <title>{{review.title}}</title>
-</head>
+{%block title%}{{review.title}}{%endblock%}
 
-<body>
+{%block content%}
+
   
-  {% for message in get_flashed_messages()%}
-  <p>
-    <b>{{message}}</b>
-  </p>
-  {%endfor%}
+{% for message in get_flashed_messages()%}
+<p>
+  <b>{{message}}</b>
+</p>
+{%endfor%}
 
-  <h1>{{review.title}}</h1>
-  {% if session.user_id == review.user_id %}
-  <p>
-    <a href="/edit_review/{{review.id}}">Muokkaa</a>
-    <a href="/remove_review/{{review.id}}">Poista</a>
-  </p>
-  {% endif %}
-  <p>
-    {{review.content}}
-  </p>
-  <p>
-    Ohjaaja: {{review.director}}
-  </p>
-  <p>
-    Julkaisuvuosi: {{review.release_year}}
-  </p>
-  <p>
-    Genre: {{review.genre}}
-  </p>
-  <p>
-    Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
-  </p>
-  {% if classes.theme or classes.style or classes.audience %}
-  <p>
-    <ul>
-      <li>Teema: {{classes.theme}}</li>
-      <li>Tyyli: {{classes.style}}</li>
-      <li>Kohdeyleisö: {{classes.audience}}</li>
-    </ul>
-  </p>
-  {%endif%}
-  <h2>Kommentit</h2>
+<h2>{{review.title}}</h2>
+{% if session.user_id == review.user_id %}
+<p>
+  <a href="/edit_review/{{review.id}}">Muokkaa</a>
+  <a href="/remove_review/{{review.id}}">Poista</a>
+</p>
+{% endif %}
+<p>
+  {{review.content}}
+</p>
+<p>
+  Ohjaaja: {{review.director}}
+</p>
+<p>
+  Julkaisuvuosi: {{review.release_year}}
+</p>
+<p>
+  Genre: {{review.genre}}
+</p>
+<p>
+  Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
+</p>
+{% if classes.theme or classes.style or classes.audience %}
+<p>
   <ul>
-    {%for comment in comments%}
-    <li>{{comment.content}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
-    {%endfor%}
+    <li>Teema: {{classes.theme}}</li>
+    <li>Tyyli: {{classes.style}}</li>
+    <li>Kohdeyleisö: {{classes.audience}}</li>
   </ul>
-  <h2>Uusi kommentti</h2>
-  <form action="/create_comment" method="post">
-    <p>
-      Kommentti: <br />
-      <textarea name="content" rows="5" cols="60" maxlength="1000" required></textarea>
-    </p>
-
-    <p>
-      Arvio: <br />
-      <input type="number" name="rating" min="1" max="5" required/>
-    </p>
-    <input type="hidden" name="review_id" value="{{review.id}}">
-    <input type="submit" value="Julkaise"/>
-  </form>
+</p>
+{%endif%}
+<h3>Kommentit</h3>
+<ul>
+  {%for comment in comments%}
+  <li>{{comment.content}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
+  {%endfor%}
+</ul>
+<h3>Uusi kommentti</h3>
+<form action="/create_comment" method="post">
   <p>
-    <a href="/">Takaisin</a>
+    Kommentti: <br />
+    <textarea name="content" rows="5" cols="60" maxlength="1000" required></textarea>
   </p>
-</body>
 
-</html>
+  <p>
+    Arvio: <br />
+    <input type="number" name="rating" min="1" max="5" required/>
+  </p>
+  <input type="hidden" name="review_id" value="{{review.id}}">
+  <input type="submit" value="Julkaise"/>
+</form>
+{%endblock%}

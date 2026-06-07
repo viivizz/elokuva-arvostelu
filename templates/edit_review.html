@@ -1,89 +1,84 @@
-<!DOCTYPE html>
-<html>
+{%extends "layout.html"%}
 
-<head>
-  <title>Arvostelun muokkaus</title>
-</head>
+{%block title%}Arvostelun muokkaus{%endblock%}
 
-<body>
+{%block content%}
   
-  {% for message in get_flashed_messages()%}
+{% for message in get_flashed_messages()%}
+<p>
+  <b>{{message}}</b>
+</p>
+{%endfor%}
+
+<h2>Arvostelun muokkaus</h2>
+<form action="/update_review" method="post">
   <p>
-    <b>{{message}}</b>
+    Elokuvan nimi: <br />
+    <input type="text" name="title" value="{{review.title}}" maxlength="50" required/>
   </p>
-  {%endfor%}
+  <p>
+    Ohjaaja: <br />
+    <input type="text" name="director" value="{{review.director}}" maxlength="50" required/>
+  </p>
 
-  <h1>Arvostelun muokkaus</h1>
-  <form action="/update_review" method="post">
-    <p>
-      Elokuvan nimi: <br />
-      <input type="text" name="title" value="{{review.title}}" maxlength="50" required/>
-    </p>
-    <p>
-      Ohjaaja: <br />
-      <input type="text" name="director" value="{{review.director}}" maxlength="50" required/>
-    </p>
+  <p>
+    Julkaisuvuosi: <br />
+    <input type="number" name="release_year" value="{{review.release_year}}" required/>
+  </p>
 
-    <p>
-      Julkaisuvuosi: <br />
-      <input type="number" name="release_year" value="{{review.release_year}}" required/>
-    </p>
+  <p>
+    Genre: <br />
+    <input type="text" name="genre" value="{{review.genre}}" maxlength="50" required/>
+  </p>
 
-    <p>
-      Genre: <br />
-      <input type="text" name="genre" value="{{review.genre}}" maxlength="50" required/>
-    </p>
+  <p>
+    Arvio: <br />
+    <textarea name="content" rows="8" cols="60" maxlength="1000" required>{{review.content}}</textarea>
+  </p>
+  <input type="hidden" name="review_id" value="{{review.id}}"/>
 
-    <p>
-      Arvio: <br />
-      <textarea name="content" rows="8" cols="60" maxlength="1000" required>{{review.content}}</textarea>
-    </p>
-    <input type="hidden" name="review_id" value="{{review.id}}"/>
+  <p>
+    Teema: <br />
+    <select name="theme">
+      <option value="">(valitse)</option>
+      {%for theme in themes%}
+        {%if theme.value==classes.theme%}
+          <option value="{{theme.value}}" selected>{{theme.value}}</option>
+        {%else%}
+          <option value="{{theme.value}}">{{theme.value}}</option>
+        {%endif%}
+      {%endfor%}
+    </select>
+  </p>
 
-    <p>
-      Teema: <br />
-      <select name="theme">
-        <option value="">(valitse)</option>
-        {%for theme in themes%}
-          {%if theme.value==classes.theme%}
-            <option value="{{theme.value}}" selected>{{theme.value}}</option>
-          {%else%}
-            <option value="{{theme.value}}">{{theme.value}}</option>
-          {%endif%}
-        {%endfor%}
-      </select>
-    </p>
+  <p>
+    Tyyli: <br />
+    <select name="style">
+      <option value="">(valitse)</option>
+      {%for style in styles%}
+        {%if style.value==classes.style%}
+          <option value="{{style.value}}" selected>{{style.value}}</option>
+        {%else%}
+          <option value="{{style.value}}">{{style.value}}</option>
+        {%endif%}
+      {%endfor%}
+    </select>
+  </p>
 
-    <p>
-      Tyyli: <br />
-      <select name="style">
-        <option value="">(valitse)</option>
-        {%for style in styles%}
-          {%if style.value==classes.style%}
-            <option value="{{style.value}}" selected>{{style.value}}</option>
-          {%else%}
-            <option value="{{style.value}}">{{style.value}}</option>
-          {%endif%}
-        {%endfor%}
-      </select>
-    </p>
+  <p>
+    Kohdeyleisö: <br />
+    <select name="audience">
+      <option value="">(valitse)</option>
+      {%for audience in audiences%}
+        {%if audience.value==classes.audience%}
+          <option value="{{audience.value}}" selected>{{audience.value}}</option>
+        {%else%}
+          <option value="{{audience.value}}">{{audience.value}}</option>
+        {%endif%}
+      {%endfor%}
+    </select>
+  </p>
 
-    <p>
-      Kohdeyleisö: <br />
-      <select name="audience">
-        <option value="">(valitse)</option>
-        {%for audience in audiences%}
-          {%if audience.value==classes.audience%}
-            <option value="{{audience.value}}" selected>{{audience.value}}</option>
-          {%else%}
-            <option value="{{audience.value}}">{{audience.value}}</option>
-          {%endif%}
-        {%endfor%}
-      </select>
-    </p>
-
-    <input type="submit" value="Päivitä arvostelua" />
-  </form>
-</body>
-
-</html>
+  <input type="submit" value="Päivitä arvostelua" />
+</form>
+{%endblock%}
