@@ -18,8 +18,8 @@
   <a href="/remove_review/{{review.id}}">Poista</a>
 </p>
 {% endif %}
-<p>
-  {{review.content}}
+<p class="review-content">
+  {{review.content | show_lines}}
 </p>
 <p>
   Ohjaaja: {{review.director}}

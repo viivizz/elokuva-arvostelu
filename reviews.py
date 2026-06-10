@@ -63,7 +63,12 @@ def get_classes(review_id):
     return result[0] if result else {"theme": "", "style": "", "audience": ""}
 
 def get_reviews():
-    sql = "SELECT id, title FROM reviews ORDER BY id DESC"
+    sql = """SELECT reviews.id, reviews.title, users.id user_id, users.username,
+        COUNT(comments.id) comment_count
+      FROM reviews JOIN users ON reviews.user_id=users.id
+        LEFT JOIN comments ON reviews.id=comments.review_id
+      GROUP BY reviews.id
+      ORDER BY reviews.id DESC"""
     return db.query(sql)
 
 def get_review(review_id):

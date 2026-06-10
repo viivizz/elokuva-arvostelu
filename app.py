@@ -5,6 +5,7 @@ import db
 import config
 import reviews
 import users
+import markupsafe
 
 
 
@@ -22,6 +23,12 @@ def require_login():
 def index():
     all_reviews=reviews.get_reviews()
     return render_template("index.html", reviews=all_reviews)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
