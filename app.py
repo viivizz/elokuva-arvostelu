@@ -156,8 +156,9 @@ def create_review():
         abort(403)
 
     reviews.add_review(title, content, director, release_year, genre, user_id, theme, style, audience)
+    review_id=db.last_insert_id()
     flash("Arvostelu luotiin onnistuneesti")
-    return redirect("/")
+    return redirect("/review/"+str(review_id))
 
 
 @app.route("/edit_review/<int:review_id>")
