@@ -14,3 +14,28 @@ body {
   margin: 1em;
   padding: 0.2em 0.5em;
 }
+
+.star_rating {
+  display:flex;
+  flex-direction: row-reverse;
+  justify-content:flex-end;
+}
+
+.star_rating input {
+  display: none;
+}
+
+.star_rating label {
+  font-size: 2rem;
+  color: #ddd;
+  cursor: pointer;
+}
+
+.star_rating label:hover,
+.star_rating label:hover ~ label {
+  color: gold
+}
+
+.star_rating input:checked~label{
+  color: gold;
+}

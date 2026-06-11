@@ -56,6 +56,11 @@ def get_comments(review_id):
             ORDER BY comments.id DESC"""
     return db.query(sql, [review_id])
 
+def get_average_rating(review_id):
+    sql="SELECT AVG(rating) AS average FROM comments WHERE review_id=?"
+    result=db.query(sql, [review_id])
+    return result[0]["average"]
+
 
 def get_classes(review_id):
     sql="SELECT theme, style, audience FROM review_classes WHERE review_id =?"
@@ -64,7 +69,8 @@ def get_classes(review_id):
 
 def get_reviews():
     sql = """SELECT reviews.id, reviews.title, users.id user_id, users.username,
-        COUNT(comments.id) comment_count
+        COUNT(comments.id) comment_count,
+        AVG(comments.rating) average_rating
       FROM reviews JOIN users ON reviews.user_id=users.id
         LEFT JOIN comments ON reviews.id=comments.review_id
       GROUP BY reviews.id

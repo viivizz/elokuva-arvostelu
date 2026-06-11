@@ -57,10 +57,10 @@ def show_review(review_id):
         abort(403)
     classes=reviews.get_classes(review_id)
     comments=reviews.get_comments(review_id)
-
+    average_rating=reviews.get_average_rating(review_id)
     saved_content=session.pop("saved_content", "")
     saved_rating=session.pop("saved_rating", "")
-    return render_template("show_review.html", review=review, classes=classes, comments=comments, saved_content=saved_content, saved_rating=saved_rating)
+    return render_template("show_review.html", review=review, classes=classes, comments=comments, saved_content=saved_content, saved_rating=saved_rating, average_rating=average_rating)
 
 
 @app.route("/new_review")
@@ -262,7 +262,7 @@ def remove_review(review_id):
         return render_template("remove_review.html", review=review)
     
     if request.method=="POST":
-        if "remove" in request.form:
+        if request.form.get("remove"):
             reviews.remove_review(review_id)
             return redirect("/")
         else:

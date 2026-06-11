@@ -11,13 +11,13 @@ CREATE TABLE reviews (
     release_year INTEGER,
     genre TEXT,
     content TEXT,
-    user_id INTEGER REFERENCES users
+    user_id INTEGER REFERENCES users(id)
 );
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
-    review_id REFERENCES reviews,
-    user_id INTEGER REFERENCES users,
+    review_id INTEGER REFERENCES reviews(id),
+    user_id INTEGER REFERENCES users(id),
     content TEXT,
     rating INTEGER
 );
@@ -39,6 +39,6 @@ CREATE TABLE audiences (
 
 CREATE TABLE review_classes (
     id INTEGER PRIMARY KEY,
-    review_id INTEGER REFERENCES reviews,
+    review_id INTEGER REFERENCES reviews(id),
     theme TEXT, style TEXT, audience TEXT
 );

@@ -27,15 +27,21 @@
   <li>Genre: {{review.genre}}</li>
 </ul>
 
-{% if classes.theme or classes.style or classes.audience %}
-<p>
-  <ul>
+
+<ul>
+  {%if classes.theme%}
     <li>Teema: {{classes.theme}}</li>
+  {%endif%}
+
+  {%if classes.style%}
     <li>Tyyli: {{classes.style}}</li>
+  {%endif%}
+
+  {%if classes.audience%}
     <li>Kohdeyleisö: {{classes.audience}}</li>
-  </ul>
-</p>
-{%endif%}
+  {%endif%}
+</ul>
+
 <p>
   Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
 </p>
@@ -46,6 +52,28 @@
   <li>{{comment.content}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
   {%endfor%}
 </ul>
+
+{%if average_rating is not none%}
+<p>
+  Kommenttien keskiarvo elokuvalle:
+  {% set avg=average_rating|round(0)|int %}
+
+  {% for i in range(avg)%}
+    ★
+  {%endfor%}
+
+  {% for i in range(5-avg)%}
+    ☆
+  {%endfor%}
+
+  ({{avg}}/5)
+</p>
+{%else%}
+<p>
+  Elokuva ei ole saanut vielä arvioita.
+</p>
+{%endif%}
+
 <h3>Uusi kommentti</h3>
 <form action="/create_comment" method="post">
   <p>
@@ -54,9 +82,31 @@
   </p>
 
   <p>
-    Arvio: <br />
-    <input type="number" name="rating" min="1" max="5" value="{{saved_rating}}" required/>
+    Arvio:
   </p>
+
+  <div class="star_rating">
+    <input type="radio" id="star5" name="rating" value="5"
+    {%if saved_rating=="5"%}checked{%endif%} required>
+    <label for="star5">★</label>
+
+    <input type="radio" id="star4" name="rating" value="4"
+    {%if saved_rating=="4"%}checked{%endif%}>
+    <label for="star4">★</label>
+
+    <input type="radio" id="star3" name="rating" value="3"
+    {%if saved_rating=="3"%}checked{%endif%}>
+    <label for="star3">★</label>
+
+    <input type="radio" id="star2" name="rating" value="2"
+    {%if saved_rating=="2"%}checked{%endif%}>
+    <label for="star2">★</label>
+
+    <input type="radio" id="star1" name="rating" value="1"
+    {%if saved_rating=="1"%}checked{%endif%}>
+    <label for="star1">★</label>
+  </div>
+
   <input type="hidden" name="review_id" value="{{review.id}}">
   <input type="submit" value="Julkaise"/>
 </form>
