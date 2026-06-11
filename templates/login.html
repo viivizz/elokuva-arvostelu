@@ -14,6 +14,7 @@
 <h2>Kirjaudu sisään</h2>
 
 <form action="/login" method="post">
+  <input type="hidden" name="next" value="{{request.args.get('next', '')}}">
   <p>
     Tunnus: <br />
     <input type="text" name="username" />

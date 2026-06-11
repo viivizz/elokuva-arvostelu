@@ -21,18 +21,12 @@
 <p class="review-content">
   {{review.content | show_lines}}
 </p>
-<p>
-  Ohjaaja: {{review.director}}
-</p>
-<p>
-  Julkaisuvuosi: {{review.release_year}}
-</p>
-<p>
-  Genre: {{review.genre}}
-</p>
-<p>
-  Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
-</p>
+<ul>
+  <li>Ohjaaja: {{review.director}}</li>
+  <li>Julkaisuvuosi: {{review.release_year}}</li>
+  <li>Genre: {{review.genre}}</li>
+</ul>
+
 {% if classes.theme or classes.style or classes.audience %}
 <p>
   <ul>
@@ -42,6 +36,10 @@
   </ul>
 </p>
 {%endif%}
+<p>
+  Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
+</p>
+
 <h3>Kommentit</h3>
 <ul>
   {%for comment in comments%}
@@ -52,12 +50,12 @@
 <form action="/create_comment" method="post">
   <p>
     Kommentti: <br />
-    <textarea name="content" rows="5" cols="60" maxlength="1000" required></textarea>
+    <textarea name="content" rows="5" cols="60" maxlength="1000" required>{{saved_content}}</textarea>
   </p>
 
   <p>
     Arvio: <br />
-    <input type="number" name="rating" min="1" max="5" required/>
+    <input type="number" name="rating" min="1" max="5" value="{{saved_rating}}" required/>
   </p>
   <input type="hidden" name="review_id" value="{{review.id}}">
   <input type="submit" value="Julkaise"/>

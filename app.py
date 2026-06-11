@@ -57,14 +57,17 @@ def show_review(review_id):
         abort(403)
     classes=reviews.get_classes(review_id)
     comments=reviews.get_comments(review_id)
-    return render_template("show_review.html", review=review, classes=classes, comments=comments)
+
+    saved_content=session.pop("saved_content", "")
+    saved_rating=session.pop("saved_rating", "")
+    return render_template("show_review.html", review=review, classes=classes, comments=comments, saved_content=saved_content, saved_rating=saved_rating)
 
 
 @app.route("/new_review")
 def new_review():
     if not require_login():
         return redirect("/login")
-    
+
     themes=reviews.get_themes()
     styles=reviews.get_styles()
     audiences=reviews.get_audiences()
@@ -76,7 +79,11 @@ def new_review():
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
     if not require_login():
-        return redirect("/login")
+        session["saved_content"]=request.form["content"]
+        session["saved_rating"]=request.form["rating"]
+        review_id=request.form["review_id"]
+        return redirect(f"/login?next=/review/{review_id}")
+
 
     review_id=int(request.form["review_id"])
     review=reviews.get_review(review_id)
@@ -302,6 +309,10 @@ def login():
         if user_id:
             session["user_id"]=user_id
             session["username"] = username
+
+            next_page=request.form.get("next")
+            if next_page:
+                return redirect(next_page)
             return redirect("/")
         
         flash("VIRHE: väärä tunnus tai salasana")
