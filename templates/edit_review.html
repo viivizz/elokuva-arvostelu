@@ -10,7 +10,9 @@
 </p>
 {%endfor%}
 
-<h2>Arvostelun muokkaus</h2>
+<h2>{{review.title}}</h2>
+<h3>Arvostelun muokkaus</h3>
+
 <form action="/update_review" method="post">
   <p>
     Elokuvan nimi: <br />
@@ -81,4 +83,8 @@
 
   <input type="submit" value="Päivitä arvostelua" />
 </form>
+<p>
+  <a href="/review/{{review.id}}">Takaisin arvosteluun</a>
+
+</p>
 {%endblock%}
