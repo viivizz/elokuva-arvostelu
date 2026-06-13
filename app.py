@@ -315,7 +315,7 @@ def login():
                 return redirect(next_page)
             return redirect("/")
         
-        flash("VIRHE: väärä tunnus tai salasana")
+        flash("VIRHE: Väärä tunnus tai salasana")
         return render_template("login.html")
 
 
