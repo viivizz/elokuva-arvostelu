@@ -6,6 +6,7 @@ import config
 import reviews
 import users
 import markupsafe
+import secrets
 
 
 
@@ -17,6 +18,12 @@ def require_login():
         flash("Kirjaudu sisään käyttääksesi tätä toimintoa")
         return False
     return True
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 
 @app.route("/")
@@ -83,7 +90,7 @@ def create_comment():
         session["saved_rating"]=request.form["rating"]
         review_id=request.form["review_id"]
         return redirect(f"/login?next=/review/{review_id}")
-
+    check_csrf()
 
     review_id=int(request.form["review_id"])
     review=reviews.get_review(review_id)
@@ -120,7 +127,8 @@ def create_comment():
 def create_review():
     if not require_login():
         return redirect("/login")
-    
+    check_csrf()
+
     title= request.form["title"]
     if not title or len(title)>50:
         flash("Virhe: elokuvan nimi on virheellinen")
@@ -192,7 +200,8 @@ def edit_review(review_id):
 def update_review():
     if not require_login():
         return redirect("/login")
-    
+    check_csrf()
+
     review_id=request.form["review_id"]
     review=reviews.get_review(review_id)
     if not review:
@@ -251,7 +260,7 @@ def update_review():
 def remove_review(review_id):
     if not require_login():
         return redirect("/login")
-    
+
     review=reviews.get_review(review_id)
     if not review:
         abort(404)
@@ -262,6 +271,7 @@ def remove_review(review_id):
         return render_template("remove_review.html", review=review)
     
     if request.method=="POST":
+        check_csrf()
         if request.form.get("remove"):
             reviews.remove_review(review_id)
             return redirect("/")
@@ -309,7 +319,7 @@ def login():
         if user_id:
             session["user_id"]=user_id
             session["username"] = username
-
+            session["csrf_token"]=secrets.token_hex(16)
             next_page=request.form.get("next")
             if next_page:
                 return redirect(next_page)
