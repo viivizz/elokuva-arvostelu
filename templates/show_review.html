@@ -42,7 +42,7 @@
 <h3>Kommentit</h3>
 <ul>
   {%for comment in comments%}
-  <li>{{comment.content}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
+  <li>{{comment.content | show_lines}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
   {%endfor%}
 </ul>
 
