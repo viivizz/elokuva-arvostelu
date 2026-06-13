@@ -9,12 +9,12 @@
 <form action="/login" method="post">
   <input type="hidden" name="next" value="{{request.args.get('next', '')}}">
   <p>
-    Tunnus: <br />
-    <input type="text" name="username" />
+    <label for="username">Tunnus:</label> <br />
+    <input type="text" name="username" id="username" required />
   </p>
   <p>
-    Salasana: <br />
-    <input type="password" name="password" />
+    <label for="password">Salasana:</label> <br />
+    <input type="password" name="password" id="password" required/>
   </p>
     <input type="submit" value="Kirjaudu" />
 </form>

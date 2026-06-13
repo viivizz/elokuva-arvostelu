@@ -70,12 +70,12 @@
 <h3>Uusi kommentti</h3>
 <form action="/create_comment" method="post">
   <p>
-    Kommentti: <br />
-    <textarea name="content" rows="5" cols="60" maxlength="1000" required>{{saved_content}}</textarea>
+    <label for="content">Kommentti:</label> <br />
+    <textarea name="content" id="content" rows="5" cols="60" maxlength="1000" required>{{saved_content}}</textarea>
   </p>
 
   <p>
-    Arvio:
+    <label>Arvio:</label>
   </p>
 
   <div class="star_rating">

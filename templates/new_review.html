@@ -7,33 +7,33 @@
 <h2>Uusi arvostelu</h2>
 <form action="/create_review" method="post">
   <p>
-    Elokuvan nimi: <br />
-    <input type="text" name="title" maxlength="50" required/>
+    <label for="title">Elokuvan nimi:</label> <br />
+    <input type="text" name="title" id="title" maxlength="50" required/>
   </p>
 
   <p>
-    Ohjaaja: <br />
-    <input type="text" name="director" maxlength="50" required/>
+    <label for="director">Ohjaaja:</label> <br />
+    <input type="text" name="director" id="director" maxlength="50" required/>
   </p>
 
   <p>
-    Julkaisuvuosi: <br />
-    <input type="number" name="release_year" required/>
+    <label for="release_year">Julkaisuvuosi:</label> <br />
+    <input type="number" name="release_year" id="release_year" required/>
   </p>
 
   <p>
-    Genre: <br />
-    <input type="text" name="genre" maxlength="50" required/>
+    <label for="genre">Genre:</label> <br />
+    <input type="text" name="genre" id="genre" maxlength="50" required/>
   </p>
 
   <p>
-    Arvio: <br />
-    <textarea name="content" rows="8" cols="60" maxlength="1000" required></textarea>
+    <label for="content">Arvio:</label> <br />
+    <textarea name="content" id="content" rows="8" cols="60" maxlength="1000" required></textarea>
   </p>
 
   <p>
-    Teema: <br />
-    <select name="theme">
+    <label for="theme">Teema:</label> <br />
+    <select name="theme" id="theme">
       <option value="">(valitse)</option>
       {%for theme in themes%}
         <option value="{{theme.value}}">{{theme.value}}</option>
@@ -42,8 +42,8 @@
   </p>
 
   <p>
-    Tyyli: <br />
-    <select name="style">
+    <label for="style">Tyyli:</label> <br />
+    <select name="style" id="style">
       <option value="">(valitse)</option>
       {%for style in styles%}
         <option value="{{style.value}}">{{style.value}}</option>
@@ -52,8 +52,8 @@
   </p>
 
   <p>
-    Kohdeyleisö: <br />
-    <select name="audience">
+    <label for="audience">Kohdeyleisö:</label> <br />
+    <select name="audience" id="audience">
       <option value="">(valitse)</option>
       {%for audience in audiences%}
         <option value="{{audience.value}}">{{audience.value}}</option>
