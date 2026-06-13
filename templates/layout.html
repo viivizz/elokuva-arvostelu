@@ -9,9 +9,9 @@
 <body>
   
   {% for message in get_flashed_messages()%}
-  <p>
-    <b>{{message}}</b>
-  </p>
+  <div class="info">
+    {{message}}
+  </div>
   {%endfor%}
 
   <h1>Elokuva-arvostelu</h1>
