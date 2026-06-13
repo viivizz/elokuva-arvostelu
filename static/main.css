@@ -22,7 +22,8 @@ body {
 }
 
 .star_rating input {
-  display: none;
+  opacity: 0;
+  position: absolute;
 }
 
 .star_rating label {
