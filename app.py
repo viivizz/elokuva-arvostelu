@@ -7,6 +7,7 @@ import reviews
 import users
 import markupsafe
 import secrets
+from constants import MAX_TITLE, MAX_CONTENT, MAX_DIRECTOR, MAX_GENRE, MIN_YEAR, MAX_YEAR
 
 
 
@@ -42,8 +43,8 @@ def show_user(user_id):
     user=users.get_user(user_id)
     if not user:
         abort(404)
-    reviews=users.get_reviews(user_id)
-    return render_template("show_user.html", user=user, reviews=reviews)
+    user_reviews=users.get_reviews(user_id)
+    return render_template("show_user.html", user=user, reviews=user_reviews)
 
 
 @app.route("/find_review")
@@ -61,7 +62,7 @@ def find_review():
 def show_review(review_id):
     review=reviews.get_review(review_id)
     if not review:
-        abort(403)
+        abort(404)
     classes=reviews.get_classes(review_id)
     comments=reviews.get_comments(review_id)
     average_rating=reviews.get_average_rating(review_id)
@@ -79,7 +80,9 @@ def new_review():
     styles=reviews.get_styles()
     audiences=reviews.get_audiences()
 
-    return render_template("new_review.html", themes=themes, styles=styles, audiences=audiences)
+    form_data=session.pop("form_data", {})
+
+    return render_template("new_review.html", themes=themes, styles=styles, audiences=audiences, form_data=form_data)
 
 
 
@@ -95,16 +98,19 @@ def create_comment():
     review_id=int(request.form["review_id"])
     review=reviews.get_review(review_id)
     if not review:
-        abort(403)
+        abort(404)
 
     content=request.form["content"]
-    if not content or len(content)>1000:
-        flash("Virhe: kommentti on virheellinen")
+    if not content:
+        flash("Kirjoita kommentti (ei voi olla tyhjä)")
+        return redirect("/review/"+str(review_id))
+    if len(content)>MAX_CONTENT:
+        flash("Kommentti on liian pitkä (max 1000 merkkiä)")
         return redirect("/review/"+str(review_id))
 
     rating=request.form["rating"]
     if not rating:
-        flash("Virhe: arvosana puuttuu")
+        flash("Anna arvosana (1-5 tähteä)")
         return redirect("/review/"+str(review_id))
 
     if not rating.isdigit():
@@ -130,27 +136,40 @@ def create_review():
     check_csrf()
 
     title= request.form["title"]
-    if not title or len(title)>50:
+    if not title or len(title)>MAX_TITLE:
         flash("Virhe: elokuvan nimi on virheellinen")
         return redirect("/new_review")
     
     content= request.form["content"]
-    if not content or len(content)>1000:
+    if not content or len(content)>MAX_CONTENT:
         flash("Virhe: arvosteluteksti on virheellinen")
         return redirect("/new_review")
     
     director=request.form["director"]
-    if not director or len(director)>50:
+    if not director or len(director)>MAX_DIRECTOR:
         flash("Virhe: ohjaaja on virheellinen")
         return redirect("/new_review")
     
     release_year=request.form["release_year"]
     if not release_year:
-        flash("Virhe: julkaisuvuosi puuttuu")
+        session["form_data"]=request.form
+        flash("Julkaisuvuosi puuttuu")
         return redirect("/new_review")
-    
+
+    if not release_year.isdigit():
+        session["form_data"]=request.form
+        flash("Julkaisuvuoden pitää olla numero")
+        return redirect("/new_review")
+
+    release_year=int(release_year)
+
+    if release_year<MIN_YEAR or release_year>MAX_YEAR:
+        session["form_data"]=request.form
+        flash(f"Julkaisuvuoden pitää olla välillä {MIN_YEAR}-{MAX_YEAR}")
+        return redirect("/new_review")
+
     genre=request.form["genre"]
-    if not genre or len(genre)>50:
+    if not genre or len(genre)>MAX_GENRE:
         flash("Virhe: genre on virheellinen")
         return redirect("/new_review")
     
@@ -183,7 +202,7 @@ def edit_review(review_id):
     
     review=reviews.get_review(review_id)
     if not review:
-        abort(403)
+        abort(404)
     if review["user_id"] != session["user_id"]:
         abort(403)
 
@@ -210,30 +229,37 @@ def update_review():
         abort(403)
 
     title= request.form["title"]
-    if not title or len(title)>50:
+    if not title or len(title)>MAX_TITLE:
         flash("Virhe: elokuvan nimi on virheellinen")
         return redirect("/edit_review/"+str(review_id))
     
     content= request.form["content"]
-    if not content or len(content)>1000:
+    if not content or len(content)>MAX_CONTENT:
         flash("Virhe: arvosteluteksti on virheellinen")
         return redirect("/edit_review/"+str(review_id))
     
     director=request.form["director"]
-    if not director or len(director)>50:
+    if not director or len(director)>MAX_DIRECTOR:
         flash("Virhe: ohjaaja on virheellinen")
         return redirect("/edit_review/"+str(review_id))
     
     release_year=request.form["release_year"]
     if not release_year:
-        flash("Virhe: julkaisuvuosi puuttuu")
+        flash("Julkaisuvuosi puuttuu")
         return redirect("/edit_review/"+str(review_id))
+
     if not release_year.isdigit():
-        flash("Virhe: julkaisuvuoden pitää olla numero")
+        flash("Julkaisuvuoden pitää olla numero")
         return redirect("/edit_review/"+str(review_id))
-    
+
+    release_year=int(release_year)
+
+    if release_year<MIN_YEAR or release_year>MAX_YEAR:
+        flash("Julkaisuvuoden pitää olla välillä 1800-2026")
+        return redirect("/edit_review/"+str(review_id))
+
     genre=request.form["genre"]
-    if not genre or len(genre)>50:
+    if not genre or len(genre)>MAX_GENRE:
         flash("Virhe: genre on virheellinen")
         return redirect("/edit_review/"+str(review_id))
 
