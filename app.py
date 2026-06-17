@@ -1,22 +1,26 @@
 import sqlite3
+import secrets
+
 from flask import Flask
 from flask import abort, redirect, render_template, request, session, flash
+import markupsafe
+
 import db
 import config
 import reviews
+import comments
+import classes
 import users
-import markupsafe
-import secrets
 from constants import MAX_TITLE, MAX_CONTENT, MAX_DIRECTOR, MAX_GENRE, MIN_YEAR, MAX_YEAR
 
 
 
 app = Flask(__name__)
-app.secret_key = config.secret_key
+app.secret_key = config.SECRET_KEY
 
 def require_login():
     if "user_id" not in session:
-        flash("Kirjaudu sisään käyttääksesi tätä toimintoa")
+        flash("Kirjaudu sisään käyttääksesi tätä toimintoa", "warning")
         return False
     return True
 
@@ -30,7 +34,10 @@ def check_csrf():
 @app.route("/")
 def index():
     all_reviews=reviews.get_reviews()
-    return render_template("index.html", reviews=all_reviews)
+    return render_template(
+        "index.html",
+        reviews=all_reviews
+    )
 
 @app.template_filter()
 def show_lines(content):
@@ -44,7 +51,11 @@ def show_user(user_id):
     if not user:
         abort(404)
     user_reviews=users.get_reviews(user_id)
-    return render_template("show_user.html", user=user, reviews=user_reviews)
+    return render_template(
+        "show_user.html",
+        user=user,
+        reviews=user_reviews
+    )
 
 
 @app.route("/find_review")
@@ -55,7 +66,11 @@ def find_review():
     else:
         query=""
         results=[]
-    return render_template("find_review.html", query=query, results=results)
+    return render_template(
+        "find_review.html",
+        query=query,
+        results=results
+    )
 
 
 @app.route("/review/<int:review_id>")
@@ -63,12 +78,22 @@ def show_review(review_id):
     review=reviews.get_review(review_id)
     if not review:
         abort(404)
-    classes=reviews.get_classes(review_id)
-    comments=reviews.get_comments(review_id)
+
+    review_classes=classes.get_review_classes(review_id)
+
+    review_comments=comments.get_comments(review_id)
     average_rating=reviews.get_average_rating(review_id)
     saved_content=session.pop("saved_content", "")
     saved_rating=session.pop("saved_rating", "")
-    return render_template("show_review.html", review=review, classes=classes, comments=comments, saved_content=saved_content, saved_rating=saved_rating, average_rating=average_rating)
+    return render_template(
+        "show_review.html",
+        review=review,
+        review_classes=review_classes,
+        review_comments=review_comments,
+        saved_content=saved_content,
+        saved_rating=saved_rating,
+        average_rating=average_rating
+    )
 
 
 @app.route("/new_review")
@@ -76,13 +101,17 @@ def new_review():
     if not require_login():
         return redirect("/login")
 
-    themes=reviews.get_themes()
-    styles=reviews.get_styles()
-    audiences=reviews.get_audiences()
+    grouped=classes.get_grouped_classes()
 
     form_data=session.pop("form_data", {})
 
-    return render_template("new_review.html", themes=themes, styles=styles, audiences=audiences, form_data=form_data)
+    return render_template(
+        "new_review.html",
+        themes=grouped["themes"],
+        styles=grouped["styles"],
+        audiences=grouped["audiences"],
+        form_data=form_data
+    )
 
 
 
@@ -102,31 +131,31 @@ def create_comment():
 
     content=request.form["content"]
     if not content:
-        flash("Kirjoita kommentti (ei voi olla tyhjä)")
-        return redirect("/review/"+str(review_id))
+        flash("Kirjoita kommentti (ei voi olla tyhjä)", "warning")
+        return redirect(f"/review/{review_id}")
     if len(content)>MAX_CONTENT:
-        flash("Kommentti on liian pitkä (max 1000 merkkiä)")
-        return redirect("/review/"+str(review_id))
+        flash("Kommentti on liian pitkä (max 1000 merkkiä)", "error")
+        return redirect(f"/review/{review_id}")
 
     rating=request.form["rating"]
     if not rating:
-        flash("Anna arvosana (1-5 tähteä)")
-        return redirect("/review/"+str(review_id))
+        flash("Anna arvosana (1-5 tähteä)", "warning")
+        return redirect(f"/review/{review_id}")
 
     if not rating.isdigit():
-        flash("Virhe: arvosanan pitää olla numero")
-        return redirect("/review/"+str(review_id))
+        flash("Arvosanan pitää olla numero", "error")
+        return redirect(f"/review/{review_id}")
     rating=int(rating)
     if rating < 1 or rating > 5:
-        flash("Virhe: arvosanan pitää olla välillä 1-5")
-        return redirect("/review/"+str(review_id))
+        flash("Arvosanan pitää olla välillä 1-5", "error")
+        return redirect(f"/review/{review_id}")
 
 
     user_id=session["user_id"]
 
-    reviews.add_comment(review_id, user_id, content, rating)
-    flash("Kommentti luotiin onnistuneesti")
-    return redirect("/review/"+str(review_id))
+    comments.add_comment(review_id, session["user_id"], content, rating)
+    flash("Kommentti luotiin onnistuneesti", "success")
+    return redirect(f"/review/{review_id}")
 
 
 @app.route("/create_review", methods=["POST"])
@@ -136,63 +165,80 @@ def create_review():
     check_csrf()
 
     title= request.form["title"]
-    if not title or len(title)>MAX_TITLE:
-        flash("Virhe: elokuvan nimi on virheellinen")
+    if not title:
+        flash("Kirjoita elokuvan nimi (ei voi olla tyhjä)", "warning")
+        return redirect("/new_review")
+    if len(title)>MAX_TITLE:
+        flash("Elokuvan nimi on liian pitkä (max 50 merkkiä)", "error")
         return redirect("/new_review")
     
     content= request.form["content"]
-    if not content or len(content)>MAX_CONTENT:
-        flash("Virhe: arvosteluteksti on virheellinen")
+    if not content:
+        flash("Kirjoita arvosteluteksti (ei voi olla tyhjä)", "warning")
         return redirect("/new_review")
+
+    if len(content)>MAX_CONTENT:
+        flash("Arvosteluteksti on liian pitkä (max 1000 merkkiä)", "error")
+        return redirect("/new_review")
+
     
     director=request.form["director"]
-    if not director or len(director)>MAX_DIRECTOR:
-        flash("Virhe: ohjaaja on virheellinen")
+    if not director:
+        flash("Kirjoita ohjaajan nimi (ei voi olla tyhjä)", "warning")
+        return redirect("/new_review")
+
+    if len(director)>MAX_DIRECTOR:
+        flash("Ohjaajan nimi on liian pitkä", "error")
         return redirect("/new_review")
     
     release_year=request.form["release_year"]
     if not release_year:
         session["form_data"]=request.form
-        flash("Julkaisuvuosi puuttuu")
+        flash("Julkaisuvuosi puuttuu", "warning")
         return redirect("/new_review")
 
     if not release_year.isdigit():
         session["form_data"]=request.form
-        flash("Julkaisuvuoden pitää olla numero")
+        flash("Julkaisuvuoden pitää olla numero", "error")
         return redirect("/new_review")
 
     release_year=int(release_year)
 
     if release_year<MIN_YEAR or release_year>MAX_YEAR:
         session["form_data"]=request.form
-        flash(f"Julkaisuvuoden pitää olla välillä {MIN_YEAR}-{MAX_YEAR}")
+        flash(f"Julkaisuvuoden pitää olla välillä {MIN_YEAR}-{MAX_YEAR}", "error")
         return redirect("/new_review")
 
     genre=request.form["genre"]
-    if not genre or len(genre)>MAX_GENRE:
-        flash("Virhe: genre on virheellinen")
+    if not genre:
+        flash("Kirjoita elokuvan genre (ei voi olla tyhjä)", "warning")
+        return redirect("/new_review")
+
+    if len(genre)>MAX_GENRE:
+        flash("Genre on liian pitkä", "error")
         return redirect("/new_review")
     
     user_id=session["user_id"]
 
+    class_ids=request.form.getlist("classes")
 
-    theme=request.form["theme"]
-    style=request.form["style"]
-    audience=request.form["audience"]
+    if not class_ids:
+        flash("Valitse vähintään yksi luokka", "warning")
+        return redirect("/new_review")
 
-    if theme!="" and theme not in reviews.get_theme_values():
-        abort(403)
+    data= {
+        "title": title,
+        "content": content,
+        "director": director,
+        "release_year": release_year,
+        "genre": genre,
+        "class_ids": class_ids
+    }
 
-    if style!="" and style not in reviews.get_style_values():
-        abort(403)
+    review_id=reviews.add_review(data, user_id)
 
-    if audience!="" and audience not in reviews.get_audience_values():
-        abort(403)
-
-    reviews.add_review(title, content, director, release_year, genre, user_id, theme, style, audience)
-    review_id=db.last_insert_id()
-    flash("Arvostelu luotiin onnistuneesti")
-    return redirect("/review/"+str(review_id))
+    flash("Arvostelu luotiin onnistuneesti", "success")
+    return redirect(f"/review/{review_id}")
 
 
 @app.route("/edit_review/<int:review_id>")
@@ -206,14 +252,19 @@ def edit_review(review_id):
     if review["user_id"] != session["user_id"]:
         abort(403)
 
-    themes=reviews.get_themes()
-    styles=reviews.get_styles()
-    audiences=reviews.get_audiences()
+    grouped=classes.get_grouped_classes()
 
-    classes=reviews.get_classes(review_id)
+    selected=classes.get_review_classes(review_id)
+    selected_ids=[c["id"] for c in selected]
 
-    return render_template("edit_review.html", review=review, themes=themes, styles=styles, audiences=audiences, classes=classes)
-
+    return render_template(
+        "edit_review.html",
+        review=review,
+        themes=grouped["themes"],
+        styles=grouped["styles"],
+        audiences=grouped["audiences"],
+        selected_ids=selected_ids
+    )
 
 @app.route("/update_review", methods=["POST"])
 def update_review():
@@ -229,57 +280,78 @@ def update_review():
         abort(403)
 
     title= request.form["title"]
-    if not title or len(title)>MAX_TITLE:
-        flash("Virhe: elokuvan nimi on virheellinen")
-        return redirect("/edit_review/"+str(review_id))
-    
+    if not title:
+        flash("Kirjoita elokuvan nimi (ei voi olla tyhjä)", "warning")
+        return redirect(f"/edit_review/{review_id}")
+    if len(title)>MAX_TITLE:
+        flash("Elokuvan nimi on liian pitkä (max 50 merkkiä)", "error")
+        return redirect(f"/edit_review/{review_id}")
+
     content= request.form["content"]
-    if not content or len(content)>MAX_CONTENT:
-        flash("Virhe: arvosteluteksti on virheellinen")
-        return redirect("/edit_review/"+str(review_id))
-    
+    if not content:
+        flash("Kirjoita arvosteluteksti (ei voi olla tyhjä)", "warning")
+        return redirect(f"/edit_review/{review_id}")
+
+    if len(content)>MAX_CONTENT:
+        flash("Arvosteluteksti on liian pitkä (max 1000 merkkiä)", "error")
+        return redirect(f"/edit_review/{review_id}")
+
+
     director=request.form["director"]
-    if not director or len(director)>MAX_DIRECTOR:
-        flash("Virhe: ohjaaja on virheellinen")
-        return redirect("/edit_review/"+str(review_id))
+    if not director:
+        flash("Kirjoita ohjaajan nimi (ei voi olla tyhjä)", "warning")
+        return redirect(f"/edit_review/{review_id}")
+
+    if len(director)>MAX_DIRECTOR:
+        flash("Ohjaajan nimi on liian pitkä", "error")
+        return redirect(f"/edit_review/{review_id}")
     
     release_year=request.form["release_year"]
     if not release_year:
-        flash("Julkaisuvuosi puuttuu")
-        return redirect("/edit_review/"+str(review_id))
+        session["form_data"]=request.form
+        flash("Julkaisuvuosi puuttuu", "warning")
+        return redirect(f"/edit_review/{review_id}")
 
     if not release_year.isdigit():
-        flash("Julkaisuvuoden pitää olla numero")
-        return redirect("/edit_review/"+str(review_id))
+        session["form_data"]=request.form
+        flash("Julkaisuvuoden pitää olla numero", "error")
+        return redirect(f"/edit_review/{review_id}")
 
     release_year=int(release_year)
 
     if release_year<MIN_YEAR or release_year>MAX_YEAR:
-        flash("Julkaisuvuoden pitää olla välillä 1800-2026")
-        return redirect("/edit_review/"+str(review_id))
+        session["form_data"]=request.form
+        flash(f"Julkaisuvuoden pitää olla välillä {MIN_YEAR}-{MAX_YEAR}", "error")
+        return redirect(f"/edit_review/{review_id}")
 
     genre=request.form["genre"]
-    if not genre or len(genre)>MAX_GENRE:
-        flash("Virhe: genre on virheellinen")
-        return redirect("/edit_review/"+str(review_id))
+    if not genre:
+        flash("Kirjoita elokuvan genre (ei voi olla tyhjä)", "warning")
+        return redirect(f"/edit_review/{review_id}")
 
-    theme=request.form["theme"]
-    style=request.form["style"]
-    audience=request.form["audience"]
+    if len(genre)>MAX_GENRE:
+        flash("Genre on liian pitkä", "error")
+        return redirect(f"/edit_review/{review_id}")
 
-    if theme!="" and theme not in reviews.get_theme_values():
-        abort(403)
+    class_ids=request.form.getlist("classes")
 
-    if style!="" and style not in reviews.get_style_values():
-        abort(403)
+    if not class_ids:
+        flash("Valitse vähintään yksi luokka", "warning")
+        return redirect(f"/edit_review/{review_id}")
 
-    if audience!="" and audience not in reviews.get_audience_values():
-        abort(403)
+    data= {
+        "title": title,
+        "content": content,
+        "director": director,
+        "release_year": release_year,
+        "genre": genre,
+        "class_ids": class_ids
+    }
 
-    reviews.update_review(review_id, title, content, director, release_year, genre, theme, style, audience)
+    reviews.update_review(review_id, data)
 
-    flash("Arvostelu päivitetty onnistuneesti")
-    return redirect("/review/"+str(review_id))
+    flash("Arvostelu päivitetty onnistuneesti", "success")
+    return redirect(f"/review/{review_id}")
 
 
 @app.route("/remove_review/<int:review_id>", methods=["GET", "POST"])
@@ -301,8 +373,7 @@ def remove_review(review_id):
         if request.form.get("remove"):
             reviews.remove_review(review_id)
             return redirect("/")
-        else:
-            return redirect("/review/"+str(review_id))
+        return redirect(f"/review/{review_id}")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -311,23 +382,31 @@ def register():
         return render_template("register.html", filled={})
     
     if request.method=="POST":
-        username = request.form["username"]
+        username = request.form["username"].strip()
         password1 = request.form["password1"]
         password2 = request.form["password2"]
 
         filled={"username": username}
 
+        if not username:
+            flash("Käyttäjänimi ei voi olla tyhjä", "error")
+            return render_template("register.html", filled=filled)
+        if len(username)<3:
+            flash("Käyttäjätunnuksen on oltava vähintään 3 merkkiä", "error")
+            return render_template("register.html", filled=filled)
+
+
         if password1 != password2:
-            flash("VIRHE: Antamasi salasanat eivät ole samat")
+            flash("Antamasi salasanat eivät ole samat", "error")
             return render_template("register.html", filled=filled)
 
         try:
             users.create_user(username, password1)
         except sqlite3.IntegrityError:
-            flash("Tunnus on jo varattu")
+            flash("Tunnus on jo varattu", "error")
             return render_template("register.html", filled=filled)
 
-        flash("Tunnus luotu onnistuneesti")
+        flash("Tunnus luotu onnistuneesti", "success")
         return redirect("/login")
 
 
@@ -335,7 +414,7 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method=="GET":
-        return render_template("login.html")
+        return render_template("login.html", filled={})
 
     if request.method=="POST":
         username = request.form["username"]
@@ -351,8 +430,9 @@ def login():
                 return redirect(next_page)
             return redirect("/")
         
-        flash("VIRHE: Väärä tunnus tai salasana")
-        return render_template("login.html")
+        if not user_id:
+            flash("VIRHE: Väärä tunnus tai salasana", "error")
+            return render_template("login.html", filled={"username": username})
 
 
 @app.route("/logout")

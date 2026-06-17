@@ -1,3 +1,4 @@
+"""Constants for the application"""
 MAX_TITLE=50
 MAX_CONTENT=1000
 MAX_DIRECTOR=50

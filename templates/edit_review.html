@@ -34,47 +34,42 @@
 
   <input type="hidden" name="review_id" value="{{review.id}}"/>
 
-  <p>
-    <label for="theme">Teema:</label> <br />
-    <select name="theme" id="theme">
-      <option value="">(valitse)</option>
-      {%for theme in themes%}
-        {%if theme.value==classes.theme%}
-          <option value="{{theme.value}}" selected>{{theme.value}}</option>
-        {%else%}
-          <option value="{{theme.value}}">{{theme.value}}</option>
-        {%endif%}
-      {%endfor%}
-    </select>
-  </p>
+  <h3>Luokat:</h3>
 
-  <p>
-    <label for="style">Tyyli:</label> <br />
-    <select name="style" id="style">
-      <option value="">(valitse)</option>
-      {%for style in styles%}
-        {%if style.value==classes.style%}
-          <option value="{{style.value}}" selected>{{style.value}}</option>
-        {%else%}
-          <option value="{{style.value}}">{{style.value}}</option>
-        {%endif%}
-      {%endfor%}
-    </select>
-  </p>
+  <h4>Teema</h4>
+  <div class="class-list">
+    {% for c in themes %}
+      <label class="class-item">
+        <input type="checkbox" name="classes" value="{{c.id}}"
+          {% if c.id in selected_ids %}checked{%endif%}>
+        <span>{{c.name}}</span>
+      </label>
+    {%endfor%}
+  </div>
 
-  <p>
-    <label for="audience">Kohdeyleisö:</label> <br />
-    <select name="audience" id="audience">
-      <option value="">(valitse)</option>
-      {%for audience in audiences%}
-        {%if audience.value==classes.audience%}
-          <option value="{{audience.value}}" selected>{{audience.value}}</option>
-        {%else%}
-          <option value="{{audience.value}}">{{audience.value}}</option>
-        {%endif%}
-      {%endfor%}
-    </select>
-  </p>
+  <h4>Tyyli</h4>
+  <div class="class-list">
+    {% for c in styles %}
+      <label class="class-item">
+        <input type="checkbox" name="classes" value="{{c.id}}"
+          {% if c.id in selected_ids %}checked{%endif%}>
+        <span>{{c.name}}</span>
+      </label>
+    {%endfor%}
+  </div>
+
+  <h4>Kohdeyleisö</h4>
+  <div class="class-list">
+    {% for c in audiences %}
+      <label class="class-item">
+        <input type="checkbox" name="classes" value="{{c.id}}"
+          {% if c.id in selected_ids %}checked{%endif%}>
+        <span>{{c.name}}</span>
+      </label>
+    {%endfor%}
+  </div>
+
+
   <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
   <input type="submit" value="Päivitä arvostelua" />
 </form>

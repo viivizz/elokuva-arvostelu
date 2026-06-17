@@ -22,17 +22,9 @@
 
 
 <ul>
-  {%if classes.theme%}
-    <li>Teema: {{classes.theme}}</li>
-  {%endif%}
-
-  {%if classes.style%}
-    <li>Tyyli: {{classes.style}}</li>
-  {%endif%}
-
-  {%if classes.audience%}
-    <li>Kohdeyleisö: {{classes.audience}}</li>
-  {%endif%}
+  {% for c in classes%}
+    <li>{{c.name}}</li>
+  {%endfor%}
 </ul>
 
 <p>

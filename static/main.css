@@ -1,8 +1,8 @@
 body {
   margin: auto;
   max-width: 50em;
-  font-family: sans-serif;
-  background-color: lightblue;
+  font-family: system-ui, Arial, sans-serif;
+  background: linear-gradient(135deg, #f8fafc, #e0f2fe);
 }
 
 .review-content {
@@ -10,18 +10,98 @@ body {
 }
 
 .review {
-  border: 2px solid black;
-  margin: 1em;
-  padding: 0.2em 0.5em;
+  background: white;
+  margin: 1em 0;
+  padding: 1em 1.2em;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
-.info {
-  border: 2px solid black;
-  margin: 1em;
-  padding: 0.5em;
-  background-color: blue;
-  color: white;
+.class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
+
+.class-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+
+.info {
+  margin: 1em 0;
+  font-weight:500;
+}
+
+.info.success {
+  color: #16a34a;
+
+}
+.info.error {
+  color: #dc2626;
+
+}
+.info.warning {
+  color: #f59e0b;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1.2em;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.85em;
+}
+
+a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.5em;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  margin-top:0.3em;
+  font-family: inherit;
+}
+
+input[type="submit"] {
+  width: fit-content;
+  padding: 0.4em 1.2em;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: none;
+
+  background: #2563eb;
+  color:white;
+
+  cursor: pointer;
+  display: block;
+  margin: 1em auto;
+}
+
+.review, .info {
+  backdrop-filter: blur(6px);
+}
+
 
 .star_rating {
   display:flex;
@@ -36,15 +116,16 @@ body {
 
 .star_rating label {
   font-size: 2rem;
-  color: #ddd;
+  color: #d1d5db;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .star_rating label:hover,
 .star_rating label:hover ~ label {
-  color: gold
+  color: #fbbf24;
 }
 
 .star_rating input:checked~label{
-  color: gold;
+  color: #fbbf24;
 }

@@ -1,41 +1,41 @@
-DELETE FROM themes;
-DELETE FROM styles;
-DELETE FROM audiences;
+DELETE FROM classes;
 
-INSERT INTO themes (value) VALUES ('dystopia');
-INSERT INTO themes (value) VALUES ('utopia');
-INSERT INTO themes (value) VALUES ('selviytyminen');
-INSERT INTO themes (value) VALUES ('tulevaisuus');
-INSERT INTO themes (value) VALUES ('historia');
-INSERT INTO themes (value) VALUES ('sota');
-INSERT INTO themes (value) VALUES ('avaruus');
-INSERT INTO themes (value) VALUES ('rikollisuus');
-INSERT INTO themes (value) VALUES ('tekoäly');
-INSERT INTO themes (value) VALUES ('villilänsi');
-INSERT INTO themes (value) VALUES ('ystävyys');
-INSERT INTO themes (value) VALUES ('perhe');
-INSERT INTO themes (value) VALUES ('politiikka');
-INSERT INTO themes (value) VALUES ('katastrofi');
-INSERT INTO themes (value) VALUES ('yliluonnollinen');
+INSERT INTO classes (name, class_type) VALUES ('dystopia', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('utopia', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('selviytyminen', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('tulevaisuus', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('historia', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('sota', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('avaruus', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('rikollisuus', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('tekoäly', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('villilänsi', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('ystävyys', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('perhe', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('politiikka', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('katastrofi', 'theme');
+INSERT INTO classes (name, class_type) VALUES ('yliluonnollinen', 'theme');
 
 
-INSERT INTO styles (value) VALUES ('klassikko');
-INSERT INTO styles (value) VALUES ('kulttielokuva');
-INSERT INTO styles (value) VALUES ('indie');
-INSERT INTO styles (value) VALUES ('taide-elokuva');
-INSERT INTO styles (value) VALUES ('animaatio');
-INSERT INTO styles (value) VALUES ('Oscar-voittaja');
-INSERT INTO styles (value) VALUES ('blockbuster');
-INSERT INTO styles (value) VALUES ('ikoninen');
-INSERT INTO styles (value) VALUES ('visuaalinen');
-INSERT INTO styles (value) VALUES ('realistinen');
-INSERT INTO styles (value) VALUES ('dokumentti');
-INSERT INTO styles (value) VALUES ('vähäeleinen');
-INSERT INTO styles (value) VALUES ('minimalistinen');
+
+INSERT INTO classes (name, class_type) VALUES ('klassikko', 'style');
+INSERT INTO classes (name, class_type) VALUES ('kulttielokuva', 'style');
+INSERT INTO classes (name, class_type) VALUES ('indie', 'style');
+INSERT INTO classes (name, class_type) VALUES ('taide-elokuva', 'style');
+INSERT INTO classes (name, class_type) VALUES ('animaatio', 'style');
+INSERT INTO classes (name, class_type) VALUES ('Oscar-voittaja', 'style');
+INSERT INTO classes (name, class_type) VALUES ('blockbuster', 'style');
+INSERT INTO classes (name, class_type) VALUES ('ikoninen', 'style');
+INSERT INTO classes (name, class_type) VALUES ('visuaalinen', 'style');
+INSERT INTO classes (name, class_type) VALUES ('realistinen', 'style');
+INSERT INTO classes (name, class_type) VALUES ('dokumentti', 'style');
+INSERT INTO classes (name, class_type) VALUES ('vähäeleinen', 'style');
+INSERT INTO classes (name, class_type) VALUES ('minimalistinen', 'style');
 
 
-INSERT INTO audiences (value) VALUES ('perhe');
-INSERT INTO audiences (value) VALUES ('lapset');
-INSERT INTO audiences (value) VALUES ('nuoret');
-INSERT INTO audiences (value) VALUES ('aikuiset');
-INSERT INTO audiences (value) VALUES ('kaikki');
+
+INSERT INTO classes (name, class_type) VALUES ('perhe', 'audience');
+INSERT INTO classes (name, class_type) VALUES ('lapset', 'audience');
+INSERT INTO classes (name, class_type) VALUES ('nuoret', 'audience');
+INSERT INTO classes (name, class_type) VALUES ('aikuiset', 'audience');
+INSERT INTO classes (name, class_type) VALUES ('kaikki', 'audience');

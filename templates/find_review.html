@@ -14,12 +14,19 @@
 </form>
 
 {% if query %}
-<h3>Tulokset</h3>
+  <h3>Tulokset</h3>
 
-<ul>
-  {% for review in results %}
-  <li><a href="/review/{{review.id}}">{{review.title}}</a></li>
-  {% endfor %}
-</ul>
-{% endif %}
+  {% if results|length==0%}
+    <p>Ei löytynyt arvosteluja hakusanalla "{{query}}"</p>
+  {%else%}
+    <ul>
+      {% for review in results %}
+      <li>
+        <a href="/review/{{review.id}}">{{review.title}}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{%endif%}
+
 {%endblock%}

@@ -10,7 +10,7 @@
   <input type="hidden" name="next" value="{{request.args.get('next', '')}}">
   <p>
     <label for="username">Tunnus:</label> <br />
-    <input type="text" name="username" id="username" required />
+    <input type="text" name="username" id="username" value="{{filled.get('username', '')}}" required />
   </p>
   <p>
     <label for="password">Salasana:</label> <br />

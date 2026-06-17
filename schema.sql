@@ -22,23 +22,16 @@ CREATE TABLE comments (
     rating INTEGER
 );
 
-CREATE TABLE themes (
-    id INTEGER PRIMARY KEY,
-    value TEXT UNIQUE
-);
 
-CREATE TABLE styles (
+CREATE TABLE classes (
     id INTEGER PRIMARY KEY,
-    value TEXT UNIQUE
-);
-
-CREATE TABLE audiences (
-    id INTEGER PRIMARY KEY,
-    value TEXT UNIQUE
+    name TEXT,
+    class_type TEXT,
+    UNIQUE(name, class_type)
 );
 
 CREATE TABLE review_classes (
-    id INTEGER PRIMARY KEY,
     review_id INTEGER REFERENCES reviews(id),
-    theme TEXT, style TEXT, audience TEXT
+    class_id INTEGER REFERENCES classes(id),
+    PRIMARY KEY (review_id, class_id)
 );
