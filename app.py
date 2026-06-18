@@ -82,7 +82,7 @@ def show_review(review_id):
     review_classes=classes.get_review_classes(review_id)
 
     review_comments=comments.get_comments(review_id)
-    average_rating=reviews.get_average_rating(review_id)
+    average_rating=comments.get_average_rating(review_id)
     saved_content=session.pop("saved_content", "")
     saved_rating=session.pop("saved_rating", "")
     return render_template(
@@ -431,7 +431,7 @@ def login():
             return redirect("/")
         
         if not user_id:
-            flash("VIRHE: Väärä tunnus tai salasana", "error")
+            flash("Väärä tunnus tai salasana", "error")
             return render_template("login.html", filled={"username": username})
 
 

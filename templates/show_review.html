@@ -4,96 +4,137 @@
 
 {%block content%}
 
-<h2>{{review.title}}</h2>
-{% if session.user_id == review.user_id %}
-<p>
-  <a href="/edit_review/{{review.id}}">Muokkaa</a>
-  <a href="/remove_review/{{review.id}}">Poista</a>
-</p>
-{% endif %}
-<p class="review-content">
-  {{review.content | show_lines}}
-</p>
-<ul>
-  <li>Ohjaaja: {{review.director}}</li>
-  <li>Julkaisuvuosi: {{review.release_year}}</li>
-  <li>Genre: {{review.genre}}</li>
-</ul>
 
-
-<ul>
-  {% for c in classes%}
-    <li>{{c.name}}</li>
-  {%endfor%}
-</ul>
-
-<p>
-  Arvostelija: <a href="/user/{{review.user_id}}">{{review.username}}</a>
-</p>
-
-<h3>Kommentit</h3>
-<ul>
-  {%for comment in comments%}
-  <li>{{comment.content | show_lines}}, {{comment.rating}}, <a href="/user/{{comment.user_id}}">{{comment.username}}</a></li>
-  {%endfor%}
-</ul>
-
-{%if average_rating is not none%}
-<p>
-  Kommenttien keskiarvo elokuvalle:
-  {% set avg=average_rating|round(0)|int %}
-
-  {% for i in range(avg)%}
-    ★
-  {%endfor%}
-
-  {% for i in range(5-avg)%}
-    ☆
-  {%endfor%}
-
-  ({{avg}}/5)
-</p>
-{%else%}
-<p>
-  Elokuva ei ole saanut vielä arvioita.
-</p>
-{%endif%}
-
-<h3>Uusi kommentti</h3>
-<form action="/create_comment" method="post">
+<div class="review">
+  <h2>{{review.title}}</h2>
+  {% if session.user_id == review.user_id %}
   <p>
-    <label for="content">Kommentti:</label> <br />
-    <textarea name="content" id="content" rows="5" cols="60" maxlength="1000" required>{{saved_content}}</textarea>
+    <a href="/edit_review/{{review.id}}">Muokkaa</a>
+
+    <a href="/remove_review/{{review.id}}">Poista</a>
   </p>
+  {% endif %}
 
-  <p>
-    <label>Arvio:</label>
-  </p>
+  <h3>Elokuvan tiedot</h3>
+  <div class="movie-info">
+    <div class="info-row">
+      <span class="label">Ohjaaja:</span>
+      <span class="value">{{review.director}}</span>
+    </div>
 
-  <div class="star_rating">
-    <input type="radio" id="star5" name="rating" value="5"
-    {%if saved_rating=="5"%}checked{%endif%} required>
-    <label for="star5">★</label>
+    <div class="info-row">
+      <span class="label">Julkaisuvuosi:</span>
+      <span class="value">{{review.release_year}}</span>
+    </div>
 
-    <input type="radio" id="star4" name="rating" value="4"
-    {%if saved_rating=="4"%}checked{%endif%}>
-    <label for="star4">★</label>
-
-    <input type="radio" id="star3" name="rating" value="3"
-    {%if saved_rating=="3"%}checked{%endif%}>
-    <label for="star3">★</label>
-
-    <input type="radio" id="star2" name="rating" value="2"
-    {%if saved_rating=="2"%}checked{%endif%}>
-    <label for="star2">★</label>
-
-    <input type="radio" id="star1" name="rating" value="1"
-    {%if saved_rating=="1"%}checked{%endif%}>
-    <label for="star1">★</label>
+    <div class="info-row">
+      <span class="label">Genre:</span>
+      <span class="value">{{review.genre}}</span>
+    </div>
   </div>
 
-  <input type="hidden" name="review_id" value="{{review.id}}">
-  <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
-  <input type="submit" value="Julkaise"/>
-</form>
+  <h3>Arvostelu</h3>
+  <p class="review-content">
+    {{review.content | show_lines}}
+  </p>
+
+  <p>
+    <h3>Luokat</h3>
+    {% for c in review_classes%}
+      <span class="tag">{{c.name}}</span>
+    {%endfor%}
+  </p>
+
+  <p>
+    <span class="comment-label">Arvostelija:</span>
+    <a href="/user/{{review.user_id}}">
+      {{review.username}}
+    </a>
+  </p>
+</div>
+
+<div class="review">
+  <h3>Kommentit</h3>
+
+  {%if average_rating is not none%}
+    <p class="avg-rating">
+      Kommenttien keskiarvo elokuvalle:
+      {% set avg=average_rating|round(0)|int %}
+
+      {% for i in range(avg)%}
+        ★
+      {%endfor%}
+
+      {% for i in range(5-avg)%}
+        ☆
+      {%endfor%}
+
+      ({{avg}}/5)
+    </p>
+  {%else%}
+    <p>Elokuva ei ole saanut vielä arvioita.</p>
+  {%endif%}
+
+  <div class="comments">
+    {%for comment in review_comments%}
+      <div class="comment">
+        <div class="comment-meta">
+          <span class="comment-label">Kommentoija:</span>
+          <a href="/user/{{comment.user_id}}">
+            {{comment.username}}
+          </a>
+
+          <span class="rating">
+            Arvosana: {{comment.rating}} ★
+          </span>
+        </div>
+
+        <div class="comment-text">
+          {{comment.content | show_lines}}
+        </div>
+      </div>
+    {%endfor%}
+  </div>
+</div>
+
+
+<div class="review">
+  <h3>Uusi kommentti</h3>
+  <form action="/create_comment" method="post">
+    <p>
+      <label for="content">Kommentti:</label> <br />
+      <textarea name="content" id="content" rows="5" cols="60" maxlength="1000" required>{{saved_content}}</textarea>
+    </p>
+
+    <p>
+      <label>Arvio:</label>
+    </p>
+
+    <div class="star_rating">
+      <input type="radio" id="star5" name="rating" value="5"
+      {%if saved_rating=="5"%}checked{%endif%} required>
+      <label for="star5">★</label>
+
+      <input type="radio" id="star4" name="rating" value="4"
+      {%if saved_rating=="4"%}checked{%endif%}>
+      <label for="star4">★</label>
+
+      <input type="radio" id="star3" name="rating" value="3"
+      {%if saved_rating=="3"%}checked{%endif%}>
+      <label for="star3">★</label>
+
+      <input type="radio" id="star2" name="rating" value="2"
+      {%if saved_rating=="2"%}checked{%endif%}>
+      <label for="star2">★</label>
+
+      <input type="radio" id="star1" name="rating" value="1"
+      {%if saved_rating=="1"%}checked{%endif%}>
+      <label for="star1">★</label>
+    </div>
+
+    <input type="hidden" name="review_id" value="{{review.id}}">
+    <input type="hidden" name="csrf_token" value="{{session.csrf_token}}" />
+    <input type="submit" value="Julkaise"/>
+  </form>
+</div>
 {%endblock%}

@@ -1,7 +1,10 @@
+import db
+
 def add_comment(review_id, user_id, content, rating):
     sql = """INSERT INTO comments (review_id, user_id, content, rating)
             VALUES (?, ?, ?, ?)"""
     db.execute(sql, [review_id, user_id, content, rating])
+
 
 def get_comments(review_id):
     sql="""
