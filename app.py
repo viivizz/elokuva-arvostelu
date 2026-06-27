@@ -164,6 +164,8 @@ def create_review():
         return redirect("/login")
     check_csrf()
 
+    session["form_data"]=request.form.to_dict(flat=False)
+
     title= request.form["title"]
     if not title:
         flash("Kirjoita elokuvan nimi (ei voi olla tyhjä)", "warning")
@@ -193,19 +195,16 @@ def create_review():
     
     release_year=request.form["release_year"]
     if not release_year:
-        session["form_data"]=request.form
         flash("Julkaisuvuosi puuttuu", "warning")
         return redirect("/new_review")
 
     if not release_year.isdigit():
-        session["form_data"]=request.form
         flash("Julkaisuvuoden pitää olla numero", "error")
         return redirect("/new_review")
 
     release_year=int(release_year)
 
     if release_year<MIN_YEAR or release_year>MAX_YEAR:
-        session["form_data"]=request.form
         flash(f"Julkaisuvuoden pitää olla välillä {MIN_YEAR}-{MAX_YEAR}", "error")
         return redirect("/new_review")
 
@@ -236,6 +235,8 @@ def create_review():
     }
 
     review_id=reviews.add_review(data, user_id)
+
+    session.pop("form_data", None)
 
     flash("Arvostelu luotiin onnistuneesti", "success")
     return redirect(f"/review/{review_id}")

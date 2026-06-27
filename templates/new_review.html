@@ -8,27 +8,27 @@
 <form action="/create_review" method="post">
   <p>
     <label for="title">Elokuvan nimi:</label> <br />
-    <input type="text" name="title" id="title" value="{{form_data.get('title', '')}}" maxlength="50" required/>
+    <input type="text" name="title" id="title" value="{{form_data.get('title', [''])[0]}}" maxlength="50" required/>
   </p>
 
   <p>
     <label for="director">Ohjaaja:</label> <br />
-    <input type="text" name="director" id="director" value="{{form_data.get('director', '')}}" maxlength="50" required/>
+    <input type="text" name="director" id="director" value="{{form_data.get('director', [''])[0]}}" maxlength="50" required/>
   </p>
 
   <p>
     <label for="release_year">Julkaisuvuosi:</label> <br />
-    <input type="number" name="release_year" id="release_year" value="{{form_data.get('release_year', '')}}" required/>
+    <input type="number" name="release_year" id="release_year" value="{{form_data.get('release_year', [''])[0]}}" required/>
   </p>
 
   <p>
     <label for="genre">Genre:</label> <br />
-    <input type="text" name="genre" id="genre" value="{{form_data.get('genre', '')}}" maxlength="50" required/>
+    <input type="text" name="genre" id="genre" value="{{form_data.get('genre', [''])[0]}}" maxlength="50" required/>
   </p>
 
   <p>
     <label for="content">Arvio:</label> <br />
-    <textarea name="content" id="content" rows="8" cols="60" maxlength="1000" required>{{form_data.get('content', '')}}</textarea>
+    <textarea name="content" id="content" rows="8" cols="60" maxlength="1000" required>{{form_data.get('content', [''])[0]}}</textarea>
   </p>
 
 
@@ -38,7 +38,11 @@
   <div class="class-list">
     {% for c in themes %}
       <label class="class-item">
-        <input type="checkbox" name="classes" value="{{c.id}}">
+        <input
+            type="checkbox"
+            name="classes" 
+            value="{{c.id}}"
+            {%if c.id|string in form_data.get("classes", [])%}checked{%endif%}>
         <span>{{ c.name }}</span>
       </label>
     {% endfor %}
@@ -48,7 +52,11 @@
   <div class="class-list">
     {% for c in styles %}
       <label class="class-item">
-        <input type="checkbox" name="classes" value="{{c.id}}">
+        <input
+            type="checkbox"
+            name="classes"
+            value="{{c.id}}"
+            {%if c.id|string in form_data.get("classes", [])%}checked{%endif%}>
         <span>{{ c.name }}</span>
       </label>
     {% endfor %}
@@ -58,7 +66,11 @@
   <div class="class-list">
     {% for c in audiences %}
       <label class="class-item">
-        <input type="checkbox" name="classes" value="{{c.id}}">
+        <input
+            type="checkbox"
+            name="classes"
+            value="{{c.id}}"
+            {%if c.id|string in form_data.get("classes", [])%}checked{%endif%}>
         <span>{{ c.name }}</span>
       </label>
     {% endfor %}

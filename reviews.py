@@ -103,6 +103,7 @@ def remove_review(review_id):
     sql = "DELETE FROM reviews WHERE id = ?"
     db.execute(sql, [review_id])
 
+
 def find_reviews(query):
     sql="""SELECT id, title
             FROM reviews
