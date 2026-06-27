@@ -10,26 +10,26 @@
 <form action="/update_review" method="post">
   <p>
     <label for="title">Elokuvan nimi:</label> <br />
-    <input type="text" name="title" id="title" value="{{review.title}}" maxlength="50" required/>
+    <input type="text" name="title" id="title" value="{{form_data.get('title', [review.title])[0]}}" maxlength="50" required/>
   </p>
   <p>
     <label for="director">Ohjaaja:</label> <br />
-    <input type="text" name="director" id="director" value="{{review.director}}" maxlength="50" required/>
+    <input type="text" name="director" id="director" value="{{form_data.get('director', [review.director])[0]}}" maxlength="50" required/>
   </p>
 
   <p>
     <label for="release_year">Julkaisuvuosi:</label> <br />
-    <input type="number" name="release_year" id="release_year" value="{{review.release_year}}" required/>
+    <input type="number" name="release_year" id="release_year" value="{{form_data.get('release_year', [review.release_year])[0]}}" required/>
   </p>
 
   <p>
     <label for="genre">Genre:</label> <br />
-    <input type="text" name="genre" id="genre" value="{{review.genre}}" maxlength="50" required/>
+    <input type="text" name="genre" id="genre" value="{{form_data.get('genre', [review.genre])[0]}}" maxlength="50" required/>
   </p>
 
   <p>
     <label for="content">Arvio:</label> <br />
-    <textarea name="content" id="content" rows="8" cols="60" maxlength="1000" required>{{review.content}}</textarea>
+    <textarea name="content" id="content" rows="8" cols="60" maxlength="1000" required>{{form_data.get('content', [review.content])[0]}}</textarea>
   </p>
 
   <input type="hidden" name="review_id" value="{{review.id}}"/>
@@ -40,7 +40,10 @@
   <div class="class-list">
     {% for c in themes %}
       <label class="class-item">
-        <input type="checkbox" name="classes" value="{{c.id}}"
+        <input
+          type="checkbox"
+          name="classes"
+          value="{{c.id}}"
           {% if c.id in selected_ids %}checked{%endif%}>
         <span>{{c.name}}</span>
       </label>

@@ -255,8 +255,12 @@ def edit_review(review_id):
 
     grouped=classes.get_grouped_classes()
 
-    selected=classes.get_review_classes(review_id)
-    selected_ids=[c["id"] for c in selected]
+    form_data=session.pop("form_data", {})
+    if form_data:
+        selected_ids=[int(x) for x in form_data.get("classes", [])]
+    else:
+        selected=classes.get_review_classes(review_id)
+        selected_ids=[c["id"] for c in selected]
 
     return render_template(
         "edit_review.html",
@@ -264,7 +268,8 @@ def edit_review(review_id):
         themes=grouped["themes"],
         styles=grouped["styles"],
         audiences=grouped["audiences"],
-        selected_ids=selected_ids
+        selected_ids=selected_ids,
+        form_data=form_data
     )
 
 @app.route("/update_review", methods=["POST"])
@@ -272,6 +277,8 @@ def update_review():
     if not require_login():
         return redirect("/login")
     check_csrf()
+
+    session["form_data"]=request.form.to_dict(flat=False)
 
     review_id=request.form["review_id"]
     review=reviews.get_review(review_id)
@@ -309,19 +316,16 @@ def update_review():
     
     release_year=request.form["release_year"]
     if not release_year:
-        session["form_data"]=request.form
         flash("Julkaisuvuosi puuttuu", "warning")
         return redirect(f"/edit_review/{review_id}")
 
     if not release_year.isdigit():
-        session["form_data"]=request.form
         flash("Julkaisuvuoden pitää olla numero", "error")
         return redirect(f"/edit_review/{review_id}")
 
     release_year=int(release_year)
 
     if release_year<MIN_YEAR or release_year>MAX_YEAR:
-        session["form_data"]=request.form
         flash(f"Julkaisuvuoden pitää olla välillä {MIN_YEAR}-{MAX_YEAR}", "error")
         return redirect(f"/edit_review/{review_id}")
 
@@ -350,6 +354,8 @@ def update_review():
     }
 
     reviews.update_review(review_id, data)
+
+    session.pop("form_data", None)
 
     flash("Arvostelu päivitetty onnistuneesti", "success")
     return redirect(f"/review/{review_id}")
